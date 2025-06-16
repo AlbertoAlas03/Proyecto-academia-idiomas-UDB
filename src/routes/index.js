@@ -1,30 +1,17 @@
-const { Router } = require('express')
-const router = Router();
-const dataController = require('../controllers/dataController')
-const { logout, validateToken } = require('../utils/middleWareAuthentication')
+import { Router } from "express";
+import { list_idiomas } from '../controllers/IdiomaController.js'
 
-//test route
+const router = Router()
+
 router.get('/api/test', (req, res) => {
     const data = {
         "id": 1,
-        "name": "API is working"
+        "message": "API is working"
     }
-    res.json(data)
+    return res.json(data)
 })
 
-//routes for users
-router.get('/api/listuser', validateToken, dataController.listUsers)
+//rutas para idiomas
+router.get('/api/list_idiomas', list_idiomas)
 
-router.post('/api/createuser', validateToken, dataController.createUser)
-
-router.put('/api/updateuser/:id', validateToken, dataController.updateUser)
-
-router.delete('/api/deleteuser/:id', validateToken, dataController.deleteUser)
-
-//routes for login
-
-router.post('/api/login', dataController.loginUser)
-
-router.post('/api/logout', validateToken, logout)
-
-module.exports = router;
+export default router

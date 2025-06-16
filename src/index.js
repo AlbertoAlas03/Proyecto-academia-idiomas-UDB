@@ -1,45 +1,46 @@
 'use strict'
-const express = require('express')
+import express from 'express'
+import cors from 'cors'
+import morgan from 'morgan'
+import { sequelize } from './database/db_connection.js'
+import dotenv from 'dotenv'
+import iniciar_relaciones from './models/relaciones.js'
+import routes from './routes/index.js'
+
+iniciar_relaciones()
+dotenv.config()
+
 const app = express()
-const morgan = require('morgan')
-const mongoose = require('mongoose')
-const cors = require('cors')
-const { MongoClient } = require("mongodb")
 
-require('dotenv').config()
-
-//settings
-const port = process.env.PORT || 3002
-app.set('json spaces', 2)
-
-//mongo connection
-const uri = process.env.Mongo_uri
-mongoose.Promise = global.Promise
-mongoose.connect(uri).then(db => console.log('Conexión exitosa')).catch(err => console.log('error: ', err))
-
-const client = new MongoClient(uri)
-
-async function run() {
+//function for the connection to the database
+const db_connection = async () => {
     try {
-        const database = client.db('sample')
-        const data = database.collection('data')
-    } finally {
-        await client.close()
+        await sequelize.authenticate();
+        console.log('Conexión exitosa');
+        await sequelize.sync({ force: true }); //creacion de tablas 
+    } catch (error) {
+        console.log("error al conectar a mysql: ", error);
+        process.exit(1)
     }
 }
 
-run().catch(console.dir);
+//check if the connection to the database is successful
+db_connection();
+
+//settings
+const port = process.env.PORT || 3002;
+app.set('json spaces', 2);
 
 //middlewares
-app.use(morgan('dev'))
-app.use(express.urlencoded({ extended: false }))
-app.use(express.json())
-app.use(cors())
+app.use(morgan('dev'));
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(cors());
 
 //routes
-app.use(require('./routes/index'))
+app.use(routes);
 
-//starting server
+//starting the server
 app.listen(port, () => {
     console.log('Server listening on port ' + port)
 })
