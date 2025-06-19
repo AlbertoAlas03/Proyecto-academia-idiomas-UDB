@@ -92,6 +92,12 @@ export const update_usuario = async (req, res, next) => {
             }
         })
 
+        if (!Usuario) {
+            return res.status(404).json({
+                message: 'Este usuario no esta registrado, por favor verifique'
+            })
+        }
+
         const exists_email_usuario = await usuario.findOne({
             where: {
                 email: email,
@@ -99,11 +105,7 @@ export const update_usuario = async (req, res, next) => {
             }
         })
 
-        if (!Usuario) {
-            return res.status(404).json({
-                message: 'Este usuario no esta registrado, por favor verifique'
-            })
-        } else if (exists_email_usuario) {
+        if (exists_email_usuario) {
             return res.status(400).json({
                 message: 'Este correo eléctronico ya esta registrado!'
             })

@@ -30,13 +30,17 @@ const nota = sequelize.define('notas', {
         onDelete: 'CASCADE'
     },
     puntaje_obtenido: {
-        type: DataTypes.DECIMAL(5,2),
+        type: DataTypes.DECIMAL(5, 2),
         allowNull: false
     },
     fecha_calificacion: {
         type: DataTypes.DATE,
         allowNull: false,
         defaultValue: DataTypes.NOW
+    },
+    nota_final: {
+        type: DataTypes.DECIMAL(5, 2),
+        allowNull: false
     }
 }, {
     tableName: 'notas',

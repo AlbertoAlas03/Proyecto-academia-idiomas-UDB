@@ -61,17 +61,19 @@ export const create_curso = async (req, res, next) => {
             }
         })
 
+        if (!Idioma) {
+            return res.status(404).json({
+                message: 'El idioma del curso no esta registrado, por favor verifique'
+            })
+        }
+
         const exists_curso = await curso.findOne({
             where: {
                 nombre: nombre
             }
         })
 
-        if (!Idioma) {
-            return res.status(404).json({
-                message: 'El idioma del curso no esta registrado, por favor verifique'
-            })
-        } else if (exists_curso) {
+        if (exists_curso) {
             return res.status(400).json({
                 message: 'Ya existe un curso con este nombre'
             })
@@ -132,11 +134,23 @@ export const update_curso = async (req, res, next) => {
             }
         })
 
+        if (!Curso) {
+            return res.status(404).json({
+                message: 'Este curso no esta registrado, por favor verifique'
+            })
+        }
+
         const Idioma = await idioma.findOne({
             where: {
                 idioma_id: idioma_id
             }
         })
+
+        if (!Idioma) {
+            return res.status(404).json({
+                message: 'El idioma del curso no esta registrado, por favor verifique'
+            })
+        }
 
         const exists_curso = await curso.findOne({
             where: {
@@ -145,17 +159,9 @@ export const update_curso = async (req, res, next) => {
             }
         })
 
-        if (!Idioma) {
-            return res.status(404).json({
-                message: 'El idioma del curso no esta registrado, por favor verifique'
-            })
-        } else if (exists_curso) {
+        if (exists_curso) {
             return res.status(400).json({
                 message: 'Ya existe un curso con este nombre'
-            })
-        } else if (!Curso) {
-            return res.status(404).json({
-                message: 'Este curso no esta registrado, por favor verifique'
             })
         }
 

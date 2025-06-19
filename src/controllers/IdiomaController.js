@@ -39,6 +39,18 @@ export const create_idioma = async (req, res, next) => {
             })
         }
 
+        const exists_idioma = await idioma.findOne({
+            where: {
+                nombre: nombre
+            }
+        })
+
+        if (exists_idioma) {
+            return res.status(400).json({
+                message: 'Ya existe un idioma con este nombre, por favor verifique'
+            })
+        }
+
         await idioma.create({
             nombre: nombre
         })
@@ -76,6 +88,12 @@ export const update_idioma = async (req, res, next) => {
             }
         })
 
+        if (!Idioma) {
+            return res.status(404).json({
+                message: 'Este idioma no esta registrado, por favor verifique'
+            })
+        }
+
         const exists_idioma = await idioma.findOne({
             where: {
                 nombre: nombre,
@@ -83,11 +101,7 @@ export const update_idioma = async (req, res, next) => {
             }
         })
 
-        if (!Idioma) {
-            return res.status(404).json({
-                message: 'Este idioma no esta registrado, por favor verifique'
-            })
-        } else if (exists_idioma) {
+        if (exists_idioma) {
             return res.status(400).json({
                 message: 'Ya existe un idioma registrado con este nombre'
             })

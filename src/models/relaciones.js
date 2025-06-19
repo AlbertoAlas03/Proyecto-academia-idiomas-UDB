@@ -4,7 +4,6 @@ import Curso from '../models/curso.js';
 import Evaluacion from '../models/evaluacion.js';
 import Inscripcion from '../models/inscripcion.js'
 import Nota from '../models/nota.js';
-import Asistencia from '../models/asistencia.js';
 import ProfesorCurso from '../models/profesor_curso.js';
 
 const iniciar_relaciones = () => {
@@ -112,17 +111,6 @@ const iniciar_relaciones = () => {
     });
 
     Nota.belongsTo(Usuario, {
-        foreignKey: 'estudiante_id',
-        as: 'estudiante'
-    });
-
-    // Relaciones de Asistencia
-    Asistencia.belongsTo(Curso, {
-        foreignKey: 'curso_id',
-        as: 'curso'
-    });
-
-    Asistencia.belongsTo(Usuario, {
         foreignKey: 'estudiante_id',
         as: 'estudiante'
     });
