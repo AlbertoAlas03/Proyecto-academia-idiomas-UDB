@@ -1,6 +1,6 @@
-import evaluacion from "../models/evaluacion";
-import curso from "../models/curso"
-import usuario from "../models/usuario"
+import evaluacion from "../models/evaluacion.js";
+import curso from "../models/curso.js"
+import usuario from "../models/usuario.js"
 import { Op } from "sequelize";
 
 export const list_evaluacion_curso = async (req, res, next) => {

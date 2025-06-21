@@ -17,7 +17,7 @@ const db_connection = async () => {
     try {
         await sequelize.authenticate();
         console.log('Conexión exitosa');
-        await sequelize.sync({ force: true }); //creacion de tablas 
+        await sequelize.sync({ force: false }); //creacion de tablas 
     } catch (error) {
         console.log("error al conectar a mysql: ", error);
         process.exit(1)

@@ -6,7 +6,7 @@ export const list_idiomas = async (req, res, next) => {
         const idiomas = await idioma.findAll()
 
         if (idiomas.length === 0) {
-            return res.status(204).json({
+            return res.status(404).json({
                 message: 'No existen idiomas registrados'
             })
         }

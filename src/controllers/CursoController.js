@@ -1,6 +1,6 @@
 import { Op } from "sequelize";
-import curso from "../models/curso";
-import idioma from "../models/idioma"
+import curso from "../models/curso.js";
+import idioma from "../models/idioma.js"
 
 export const list_cursos = async (req, res, next) => {
     try {
@@ -13,7 +13,7 @@ export const list_cursos = async (req, res, next) => {
         })
 
         if (Cursos.length === 0) {
-            return res.status(204).json({
+            return res.status(404).json({
                 message: 'No existen cursos registados'
             })
         }
@@ -155,7 +155,7 @@ export const update_curso = async (req, res, next) => {
         const exists_curso = await curso.findOne({
             where: {
                 nombre: nombre,
-                curso_id: { [Op.en]: curso_id }
+                curso_id: { [Op.ne]: curso_id }
             }
         })
 

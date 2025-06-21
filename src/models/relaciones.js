@@ -29,11 +29,6 @@ const iniciar_relaciones = () => {
         as: 'notas'
     });
 
-    Usuario.hasMany(Asistencia, {
-        foreignKey: 'estudiante_id',
-        as: 'asistencias'
-    });
-
     // Relaciones de Idioma
     Idioma.hasMany(Curso, {
         foreignKey: 'idioma_id',
@@ -59,11 +54,6 @@ const iniciar_relaciones = () => {
     Curso.hasMany(Evaluacion, {
         foreignKey: 'curso_id',
         as: 'evaluaciones'
-    });
-
-    Curso.hasMany(Asistencia, {
-        foreignKey: 'curso_id',
-        as: 'asistencias'
     });
 
     // Relaciones de Matricula

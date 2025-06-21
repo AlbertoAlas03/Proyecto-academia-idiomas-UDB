@@ -1,4 +1,4 @@
-import usuario from "../models/usuario";
+import usuario from "../models/usuario.js";
 import { Op } from "sequelize";
 
 export const list_usuario = async (req, res, next) => {
@@ -7,7 +7,7 @@ export const list_usuario = async (req, res, next) => {
         const usuarios = await usuario.findAll()
 
         if (usuarios.length === 0) {
-            return res.status(204).json({
+            return res.status(404).json({
                 message: 'No existen usuarios registrados'
             })
         }
@@ -170,6 +170,37 @@ export const delete_usuario = async (req, res, next) => {
 
         return res.status(500).json({
             message: 'Error al eliminar el usuario',
+            error: error.message
+        })
+    }
+}
+
+export const list_usuarios_profesores = async (req, res, next) => {
+    try {
+
+        const profesores = await usuario.findAll({
+            where: {
+                rol: 'profesor'
+            }
+        })
+
+        if (profesores.length === 0) {
+            return res.status(404).json({
+                message: 'No existen usuarios profesores registrados'
+            })
+        }
+
+        return res.status(200).json({
+            message: 'Usuarios profesores registrados',
+            data: profesores
+        })
+
+    } catch (error) {
+
+        console.log('Error al obtener los usarios profesores: ', error.message)
+
+        return res.status(500).json({
+            message: 'Error al obtener los usarios profesores',
             error: error.message
         })
     }

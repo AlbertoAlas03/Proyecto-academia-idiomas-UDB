@@ -1,7 +1,7 @@
-import nota from "../models/nota"
-import evaluacion from "../models/evaluacion"
-import usuario from "../models/usuario"
-import { Op, where } from "sequelize"
+import nota from "../models/nota.js"
+import evaluacion from "../models/evaluacion.js"
+import usuario from "../models/usuario.js"
+import { Op } from "sequelize"
 
 export const list_notas_estudiante = async (req, res, next) => {
     try {

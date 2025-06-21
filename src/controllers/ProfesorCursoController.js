@@ -1,8 +1,8 @@
-import profesor_curso from "../models/profesor_curso"
-import usuario from "../models/usuario"
-import curso from "../models/curso"
-import inscripcion from "../models/inscripcion"
+import profesor_curso from "../models/profesor_curso.js"
+import usuario from "../models/usuario.js"
+import curso from "../models/curso.js"
 import { Op } from "sequelize"
+import idioma from "../models/idioma.js"
 
 export const list_profesores_cursos = async (req, res, next) => {
     try {
@@ -10,7 +10,16 @@ export const list_profesores_cursos = async (req, res, next) => {
         const profesores = await profesor_curso.findAll({
             include: [{
                 model: curso,
-                as: 'curso'
+                as: 'curso',
+                include: [{
+                    model: idioma,
+                    as: 'idioma'
+                }],
+                attributes: ['curso_id', 'idioma_id', 'nombre', 'descripcion', 'programa', 'modalidad', 'horario', 'activo']
+            }, {
+                model: usuario,
+                as: 'profesor',
+                attributes: ['usuario_id', 'nombre', 'apellido', 'email']
             }]
         })
 
@@ -39,9 +48,9 @@ export const list_profesores_cursos = async (req, res, next) => {
 export const asignar_profesor_curso = async (req, res, next) => {
     try {
 
-        const { profesor_id, curso_id } = req.body
+        const { profesor_id, curso_id, aula } = req.body
 
-        if (!profesor_id || !curso_id) {
+        if (!profesor_id || !curso_id || !aula) {
             return res.status(400).json({
                 message: 'El id del profesor y del curso es obligatorio, por favor verifique'
             })
@@ -73,13 +82,14 @@ export const asignar_profesor_curso = async (req, res, next) => {
 
         const exists_profesor_asignado = await profesor_curso.findOne({
             where: {
+                profesor_id: profesor_id,
                 curso_id: curso_id
             }
         })
 
         if (exists_profesor_asignado) {
             return res.status(400).json({
-                message: 'Este curso ya esta asignado, por favor verifique'
+                message: 'Este profesor ya esta asignado a este curso, por favor verifique'
             })
         }
 
@@ -153,13 +163,14 @@ export const update_profesor_curso = async (req, res, next) => {
         const exists_profesor_curso = await profesor_curso.findOne({
             where: {
                 curso_id: curso_id,
-                profesor_id: { [Op.ne]: profesor_id }
+                profesor_id: profesor_id,
+                asignacion_id: { [Op.ne]: asignacion_id }
             }
         })
 
         if (exists_profesor_curso) {
             return res.status(400).json({
-                message: 'Este curso ya tiene un profesor asignado, por favor verifique'
+                message: 'Este profesor ya esta asignado a este curso, por favor verifique'
             })
         }
 
@@ -240,7 +251,12 @@ export const list_profesor_curso = async (req, res, next) => {
             },
             include: [{
                 model: curso,
-                as: 'curso'
+                as: 'curso',
+                include: [{
+                    model: idioma,
+                    as: 'idioma'
+                }],
+                attributes: ['curso_id', 'idioma_id', 'nombre', 'descripcion', 'programa', 'modalidad', 'horario', 'activo']
             }]
         })
 
@@ -265,45 +281,3 @@ export const list_profesor_curso = async (req, res, next) => {
     }
 }
 
-export const list_estudiantes = async (req, res, next) => {
-    try {
-
-        const { curso_id } = req.body
-
-        if (!curso_id) {
-            return res.status(400).json({
-                message: 'El id del curso es obligatorio, por favor verifique'
-            })
-        }
-
-        const estudiantes = await inscripcion.findAll({
-            where: {
-                curso_id: curso_id
-            },
-            include: [{
-                model: usuario,
-                as: 'estudiante'
-            }]
-        })
-
-        if (estudiantes.length === 0) {
-            return res.status(404).json({
-                message: 'No existen estudiantes inscritos en este curso'
-            })
-        }
-
-        return res.status(200).json({
-            message: 'Estudiantes del curso',
-            data: estudiantes
-        })
-
-    } catch (error) {
-
-        console.log('Error al obtener los estudiantes: ', error.message)
-
-        return res.status(500).json({
-            message: 'Error al obtener los estudiantes',
-            error: error.message
-        })
-    }
-}
