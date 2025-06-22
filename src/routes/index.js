@@ -3,7 +3,7 @@ import { list_idiomas, create_idioma, update_idioma, delete_idioma } from '../co
 import { list_usuario, create_usuario, update_usuario, delete_usuario, list_usuarios_profesores } from "../controllers/UsuarioController.js";
 import { list_cursos, create_curso, update_curso, delete_curso } from "../controllers/CursoController.js";
 import { list_profesores_cursos, asignar_profesor_curso, update_profesor_curso, delete_profesor_curso, list_profesor_curso } from "../controllers/ProfesorCursoController.js"
-import { list_estudiantes } from "../controllers/InscripcionController.js"
+import { list_estudiantes, inscripcion_estudiante } from "../controllers/InscripcionController.js"
 import { list_evaluacion_curso, create_evaluacion, update_evaluacion, delete_evaluacion } from "../controllers/EvaluacionController.js"
 import { list_notas_estudiante, add_nota, update_nota, calculo_nota_final } from "../controllers/NotaController.js"
 
@@ -59,6 +59,9 @@ router.get('/api/nota_final', calculo_nota_final)
 
 //ruta para obtener los usuarios profesores
 router.get('/api/list_usuarios_profesores', list_usuarios_profesores)
+
+//ruta para inscribirse a cursos
+router.post('/api/inscripcion_estudiante', inscripcion_estudiante)
 
 
 export default router

@@ -20,7 +20,8 @@ export const list_notas_estudiante = async (req, res, next) => {
             },
             include: [{
                 model: evaluacion,
-                as: 'evaluacion'
+                as: 'evaluacion',
+                attributes: ['evaluacion_id', 'nombre', 'descripcion', 'porcentaje']
             }]
         })
 
@@ -55,7 +56,7 @@ export const add_nota = async (req, res, next) => {
             return res.status(400).json({
                 message: 'Faltan campos obligatorios, por favor verifique'
             })
-        } else if (puntaje_obtenido <= 0) {
+        } else if (puntaje_obtenido <= 0 || puntaje_obtenido > 10) {
             return res.status(400).json({
                 message: 'Hay un error con el puntaje obtenido, por favor verifique'
             })
@@ -205,11 +206,31 @@ export const calculo_nota_final = async (req, res, next) => {
             })
         }
 
-        const nota_final = await nota.avg('nota_final', {
+        const notas_estudiante = await nota.findAll({
             where: {
                 estudiante_id: estudiante_id
             }
         })
+
+        if (notas_estudiante.length === 0) {
+            return res.status(404).json({
+                message: 'No existen notas registradas para este estudiante, por favor verifique'
+            })
+        }
+
+        const total_notas = await nota.count({
+            where: {
+                estudiante_id: estudiante_id
+            }
+        })
+
+        const suma_notas = await nota.sum('nota_final', {
+            where: {
+                estudiante_id: estudiante_id
+            }
+        })
+
+        const nota_final = parseFloat((suma_notas / total_notas).toFixed(2))
 
         return res.status(200).json({
             message: 'Nota final del estudiante',

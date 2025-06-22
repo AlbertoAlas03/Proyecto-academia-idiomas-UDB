@@ -57,6 +57,8 @@ export const create_evaluacion = async (req, res, next) => {
             })
         }
 
+        const Porcentaje = (parseFloat(porcentaje)) / 100
+
         const Curso = await curso.findOne({
             where: {
                 curso_id: curso_id
@@ -98,7 +100,7 @@ export const create_evaluacion = async (req, res, next) => {
             profesor_id: profesor_id,
             nombre: nombre,
             descripcion: descripcion,
-            porcentaje: porcentaje
+            porcentaje: Porcentaje
         })
 
         return res.status(200).json({
@@ -126,7 +128,13 @@ export const update_evaluacion = async (req, res, next) => {
             return res.status(400).json({
                 message: 'Faltan campos obligatorios, por favor verifique'
             })
+        } else if (porcentaje <= 0) {
+            return res.status(400).json({
+                message: 'Hay un error con el porcentaje, por favor verifique'
+            })
         }
+
+        const Porcentaje = (parseFloat(porcentaje)) / 100
 
         const Evaluacion = await evaluacion.findOne({
             where: {
@@ -143,7 +151,7 @@ export const update_evaluacion = async (req, res, next) => {
         const exists_evaluacion = await evaluacion.findOne({
             where: {
                 nombre: nombre,
-                evaluacion_id: { [Op.en]: evaluacion_id }
+                evaluacion_id: { [Op.ne]: evaluacion_id }
             }
         })
 
@@ -156,7 +164,7 @@ export const update_evaluacion = async (req, res, next) => {
         await Evaluacion.update({
             nombre: nombre,
             descripcion: descripcion,
-            porcentaje: porcentaje
+            porcentaje: Porcentaje
         })
 
         return res.status(200).json({
