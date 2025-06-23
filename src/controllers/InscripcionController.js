@@ -49,8 +49,10 @@ export const list_estudiantes = async (req, res, next) => {
 export const inscripcion_estudiante = async (req, res, next) => {
     try {
 
-        const { estudiante_id, curso_id } = req.body
+        const { curso_id } = req.body
 
+        const estudiante_id = req.usuario.usuario_id
+        
         if (!estudiante_id || !curso_id) {
             return res.status(400).json({
                 message: 'Faltan datos obligatorios, por favor verifique'

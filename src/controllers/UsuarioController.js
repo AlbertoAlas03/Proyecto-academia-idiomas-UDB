@@ -1,5 +1,10 @@
 import usuario from "../models/usuario.js";
 import { Op } from "sequelize";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken"
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 export const list_usuario = async (req, res, next) => {
     try {
@@ -51,11 +56,13 @@ export const create_usuario = async (req, res, next) => {
             })
         }
 
+        const passwordHash = bcrypt.hash(password, 10)
+
         await usuario.create({
             nombre: nombre,
             apellido: apellido,
             email: email,
-            password: password,
+            password: passwordHash,
             telefono: telefono,
             rol: rol
         })
@@ -111,11 +118,13 @@ export const update_usuario = async (req, res, next) => {
             })
         }
 
+        const passwordHash = bcrypt.hash(password, 10)
+
         await Usuario.update({
             nombre: nombre,
             apellido: apellido,
             email: email,
-            password: password,
+            password: passwordHash,
             telefono: telefono,
             rol: rol
         })
@@ -201,6 +210,55 @@ export const list_usuarios_profesores = async (req, res, next) => {
 
         return res.status(500).json({
             message: 'Error al obtener los usarios profesores',
+            error: error.message
+        })
+    }
+}
+
+export const login = async (req, res, next) => {
+    try {
+
+        const { email, password } = req.body
+
+        if (!email || !password) {
+            return res.status(400).json({
+                message: 'El correo electrónico y la contraseña son obligatorios, por favor verifique'
+            })
+        }
+
+        const Usuario = await usuario.findOne({
+            where: {
+                email: email
+            }
+        })
+
+        if (!Usuario) {
+            return res.status(404).json({
+                message: 'Este usuario no esta registrado, por favor verifique'
+            })
+        }
+
+        if (!bcrypt.compare(password, Usuario.password)) {
+            return res.status(401).json({
+                message: 'Contraseña incorrecta, por favor verifique'
+            })
+        }
+
+        const token = jwt.sign({ usuario_id: Usuario.usuario_id, nombre: Usuario.nombre, apellido: Usuario.apellido }, process.env.JWT_SECRET, {
+            expiresIn: '1h'
+        })
+
+        return res.status(200).json({
+            message: 'Inicio de sesión exitoso',
+            token: token
+        })
+
+    } catch (error) {
+
+        console.log('Error al iniciar sesión: ', error.message)
+
+        return res.status(500).json({
+            message: 'Error al iniciar sesión',
             error: error.message
         })
     }

@@ -48,7 +48,7 @@ export const list_profesores_cursos = async (req, res, next) => {
 export const asignar_profesor_curso = async (req, res, next) => {
     try {
 
-        const { profesor_id, curso_id, aula } = req.body
+        const { curso_id, profesor_id, aula } = req.body
 
         if (!profesor_id || !curso_id || !aula) {
             return res.status(400).json({
@@ -115,8 +115,7 @@ export const asignar_profesor_curso = async (req, res, next) => {
 export const update_profesor_curso = async (req, res, next) => {
     try {
 
-        const { asignacion_id, profesor_id, curso_id } = req.body
-
+        const { asignacion_id, curso_id, profesor_id } = req.body
 
         if (!asignacion_id || !profesor_id || !curso_id) {
             return res.status(400).json({
@@ -236,8 +235,8 @@ export const delete_profesor_curso = async (req, res, next) => {
 //funcion para usuario profesor
 export const list_profesor_curso = async (req, res, next) => {
     try {
-
-        const { profesor_id } = req.body
+        
+        const profesor_id = req.usuario.usuario_id
 
         if (!profesor_id) {
             return res.status(400).json({

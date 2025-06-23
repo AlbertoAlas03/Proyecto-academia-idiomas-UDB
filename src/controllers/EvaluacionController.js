@@ -44,8 +44,10 @@ export const list_evaluacion_curso = async (req, res, next) => {
 export const create_evaluacion = async (req, res, next) => {
     try {
 
-        const { curso_id, profesor_id, nombre, descripcion, porcentaje } = req.body
+        const { curso_id, nombre, descripcion, porcentaje } = req.body
 
+        const profesor_id = req.usuario.usuario_id
+        
         if (!curso_id || !profesor_id || !nombre || !descripcion || !porcentaje) {
 
             return res.status(400).json({
