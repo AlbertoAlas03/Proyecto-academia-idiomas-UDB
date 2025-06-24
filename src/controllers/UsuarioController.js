@@ -1,7 +1,7 @@
 import usuario from "../models/usuario.js";
 import { Op } from "sequelize";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken"
+import generateTokens from "../utils/generateTokens.js";
 import dotenv from 'dotenv'
 
 dotenv.config()
@@ -56,7 +56,7 @@ export const create_usuario = async (req, res, next) => {
             })
         }
 
-        const passwordHash = bcrypt.hash(password, 10)
+        const passwordHash = bcrypt.hashSync(password, 10)
 
         await usuario.create({
             nombre: nombre,
@@ -118,7 +118,7 @@ export const update_usuario = async (req, res, next) => {
             })
         }
 
-        const passwordHash = bcrypt.hash(password, 10)
+        const passwordHash = bcrypt.hashSync(password, 10)
 
         await Usuario.update({
             nombre: nombre,
@@ -238,19 +238,24 @@ export const login = async (req, res, next) => {
             })
         }
 
-        if (!bcrypt.compare(password, Usuario.password)) {
+        if (!bcrypt.compareSync(password, Usuario.password)) {
             return res.status(401).json({
                 message: 'Contraseña incorrecta, por favor verifique'
             })
         }
 
-        const token = jwt.sign({ usuario_id: Usuario.usuario_id, nombre: Usuario.nombre, apellido: Usuario.apellido }, process.env.JWT_SECRET, {
-            expiresIn: '1h'
-        })
+        const tokens = generateTokens(Usuario)
+
+        res.cookie('refreshToken', tokens.refreshToken, {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
 
         return res.status(200).json({
             message: 'Inicio de sesión exitoso',
-            token: token
+            token: tokens.accessToken
         })
 
     } catch (error) {
@@ -263,3 +268,28 @@ export const login = async (req, res, next) => {
         })
     }
 }
+
+export const logout = async (req, res, next) => {
+    try {
+
+        res.clearCookie('refreshToken', {
+            httpOnly: true,
+            sameSite: 'strict',
+            secure: false,
+        });
+
+        return res.status(200).json({
+            message: 'Sesión cerrada correctamente'
+        })
+
+    } catch (error) {
+
+        console.log('Error al cerrar sesión: ', error.message)
+
+        return res.status(500).json({
+            message: 'Error al cerrar sesión',
+            error: error.message
+        })
+    }
+}
+

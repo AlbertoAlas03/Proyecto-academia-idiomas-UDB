@@ -1,11 +1,12 @@
 import { Router } from "express";
 import { list_idiomas, create_idioma, update_idioma, delete_idioma } from '../controllers/IdiomaController.js'
-import { list_usuario, create_usuario, update_usuario, delete_usuario, list_usuarios_profesores, login } from "../controllers/UsuarioController.js";
+import { list_usuario, create_usuario, update_usuario, delete_usuario, list_usuarios_profesores, login, logout } from "../controllers/UsuarioController.js";
 import { list_cursos, create_curso, update_curso, delete_curso } from "../controllers/CursoController.js";
 import { list_profesores_cursos, asignar_profesor_curso, update_profesor_curso, delete_profesor_curso, list_profesor_curso } from "../controllers/ProfesorCursoController.js"
 import { list_estudiantes, inscripcion_estudiante } from "../controllers/InscripcionController.js"
 import { list_evaluacion_curso, create_evaluacion, update_evaluacion, delete_evaluacion } from "../controllers/EvaluacionController.js"
 import { list_notas_estudiante, add_nota, update_nota, calculo_nota_final } from "../controllers/NotaController.js"
+import refreshToken from "../controllers/TokensController.js";
 import authenticate from "../middlewares/authenticate.js";
 
 const router = Router()
@@ -20,6 +21,12 @@ router.get('/api/test', (req, res) => {
 
 //ruta para login
 router.post('/api/login', login)
+
+//ruta para logout
+router.get('/api/logout', logout)
+
+//ruta para refrescar token de acceso
+router.post('/api/refresh_token', refreshToken)
 
 //rutas para gestionar idiomas
 router.get('/api/list_idiomas', authenticate, list_idiomas)

@@ -6,6 +6,7 @@ import { sequelize } from './database/db_connection.js'
 import dotenv from 'dotenv'
 import iniciar_relaciones from './models/relaciones.js'
 import routes from './routes/index.js'
+import cookieParser from 'cookie-parser'
 
 iniciar_relaciones()
 dotenv.config()
@@ -35,6 +36,7 @@ app.set('json spaces', 2);
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(cookieParser())
 app.use(cors());
 
 //routes
