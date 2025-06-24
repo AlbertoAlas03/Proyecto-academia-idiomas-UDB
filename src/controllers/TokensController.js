@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
+import generateToken from '../utils/generateTokens'
 
 dotenv.config()
 
@@ -22,13 +23,11 @@ const refreshToken = async (req, res, next) => {
                 })
             }
 
-            const newAccessToken = jwt.sign({ usuario_id: usuario.usuario_id, nombre: usuario.nombre, apellido: usuario.apellido }, process.env.JWT_SECRET, {
-                expiresIn: '30m',
-            });
+            const newAccessToken = generateToken(usuario);
 
             return res.status(200).json({
                 message: 'Token de acceso actualizado correctamente',
-                token_nuevo: newAccessToken
+                token_nuevo: newAccessToken.accessToken
             });
         });
 
