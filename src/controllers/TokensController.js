@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
-import generateToken from '../utils/generateTokens'
+import generateToken from '../utils/generateTokens.js'
 
 dotenv.config()
 
