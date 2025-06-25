@@ -57,10 +57,16 @@ const curso = sequelize.define('cursos', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    activo: {
-        type: DataTypes.BOOLEAN,
+    estado: {
+        type: DataTypes.ENUM('activo', 'finalizado', 'no iniciado'),
         allowNull: false,
-        defaultValue: true
+        validate: {
+            isIn: {
+                args: [['activo', 'finalizado', 'no iniciado']],
+                msg: 'El estado del curso debe ser activo, finalizado o no iniciado, por favor verifique'
+            }
+        },
+        defaultValue: 'no iniciado'
     }
 }, {
     tableName: 'cursos',
