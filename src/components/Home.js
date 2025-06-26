@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Footer from './Footer'
 import Dashboard from './Dashboard';
+import User from './User';
 import useLogin from '../hooks/use-login';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/auth-context';
@@ -21,6 +22,7 @@ const Home = () => {
             const response = await logout()
 
             if (response) {
+                alert(response.message)
                 navigate('/', { replace: true })
             }
         } catch (error) {
@@ -56,6 +58,10 @@ const Home = () => {
                                             <i className="bi bi-speedometer2"></i>
                                             Dashboard
                                         </Tab>
+                                        <Tab className="nav-link d-flex align-items-center gap-2 active" aria-current="page">
+                                            <i className="bi bi-speedometer2"></i>
+                                            Usuarios
+                                        </Tab>
                                         <button className="nav-link d-flex align-items-center gap-2" onClick={() => setshowLogoutModal(true)}>
                                             <i className="bi bi-box-arrow-in-left"></i>
                                             Cerrar sesión
@@ -69,6 +75,9 @@ const Home = () => {
                         <div className="col-md-9 col-lg-10 ms-sm-auto px-md-4 pt-3">
                             <TabPanel>
                                 <Dashboard />
+                            </TabPanel>
+                            <TabPanel>
+                                <User />
                             </TabPanel>
                         </div>
                     </div>

@@ -61,7 +61,7 @@ const Login = () => {
         if (token) {
             navigate('/home', { replace: true });
         }
-    }, [token, navigate]); 
+    }, [token, navigate]);
 
     return (
         <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
@@ -71,7 +71,9 @@ const Login = () => {
                     <img src={usuario} alt="Usuario" className="img-fluid mx-auto d-block mb-4" style={{ width: '100px', height: '100px' }} />
                     {error && (
                         <div className="alert alert-danger d-flex align-items-center" role="alert">
-                            <i className="bi bi-x-circle-fill me-2"></i>
+                            <button className="me-2" style={{ background: 'transparent', border: 'none' }} onClick={() => setError(null)}>
+                                <i className="bi bi-x-circle-fill"></i>
+                            </button>
                             {error}
                         </div>
                     )}
