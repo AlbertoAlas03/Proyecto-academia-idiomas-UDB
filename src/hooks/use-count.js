@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import url from '../utils/url-data'
-import { useAuth } from './auth-context'
+import { useAuth } from '../hooks/auth-context'
 import useLogin from './use-login'
 import useRefreshToken from '../hooks/use-refreshToken'
 
