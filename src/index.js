@@ -11,9 +11,9 @@ import { AuthProvider } from './hooks/auth-context';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <AuthProvider>
-    <React.StrictMode>
+    {/* <React.StrictMode> */}
       <App />
-    </React.StrictMode>
+    {/* </React.StrictMode> */}
   </AuthProvider>
 );
 

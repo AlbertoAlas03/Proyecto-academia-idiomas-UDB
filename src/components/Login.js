@@ -13,7 +13,7 @@ const Login = () => {
     const [password, setPassword] = useState('')
 
     const navigate = useNavigate()
-    const { token } = useAuth();
+    const { token, user } = useAuth();
 
     const { login } = useLogin()
 
@@ -32,9 +32,11 @@ const Login = () => {
             const response = await login(usuario)
 
             if (response) {
+
                 navigate('/home', { replace: true })
                 clearForm()
                 setLoading(false)
+
             }
 
         } catch (error) {

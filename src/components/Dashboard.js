@@ -9,13 +9,16 @@ const Dashboard = () => {
     const { token } = useAuth()
 
     useEffect(() => {
-        count_registros(token)
+        if (token) {
+            count_registros(token)
+        }
+
     }, [])
 
     return (
         <>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 className="h2"><i className="bi bi-speedometer2"></i> Dashboard</h1>
+                <h1 className="h2"><i className="bi bi-house"></i> Dashboard</h1>
             </div>
             <div className="row g-4 mb-3">
 

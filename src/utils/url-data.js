@@ -8,8 +8,31 @@ const Url = () => {
     const url_renovar_sesion = data + 'refresh_token'
     const url_list_user = data + 'list_usuarios'
     const url_add_user = data + 'add_usuario'
+    const url_enable_user = data + 'habilitar_usuario'
+    const url_disable_user = data + 'inhabilitar_usuario'
+    const url_update_user = data + 'update_usuario'
+    const url_session = data + 'session'
+    const url_list_idiomas = data + 'list_idiomas'
+    const url_add_idioma = data + 'add_idioma'
+    const url_delete_idioma = data + 'delete_idioma'
+    const url_update_idioma = data + 'update_idioma'
 
-    return { url_login, url_logout, url_count, url_renovar_sesion, url_list_user, url_add_user }
+    return {
+        url_login,
+        url_logout,
+        url_count,
+        url_renovar_sesion,
+        url_list_user,
+        url_add_user,
+        url_enable_user,
+        url_disable_user,
+        url_update_user,
+        url_session,
+        url_list_idiomas,
+        url_add_idioma,
+        url_delete_idioma,
+        url_update_idioma
+    }
 }
 
 export default Url

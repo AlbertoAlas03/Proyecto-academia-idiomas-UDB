@@ -29,13 +29,15 @@ const useCount = () => {
 
             const errorData = await response.json()
 
-            if (errorData.message === 'Token inválido o expirado, acceso denegado') {
+            if (errorData.message_about_token) {
 
                 const modal_validacion = window.confirm('Tu sesión a expirado, ¿Desea renovarla?')
 
                 if (modal_validacion) {
 
-                    const token_nuevo = await refresh(setToken)
+                    const response_token = await refresh(setToken)
+
+                    const token_nuevo = response_token.token_nuevo
 
                     if (token_nuevo) {
                         return await count_registros(token_nuevo)

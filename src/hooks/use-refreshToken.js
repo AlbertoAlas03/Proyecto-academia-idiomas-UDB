@@ -1,8 +1,12 @@
 import Url from "../utils/url-data"
+import { useAuth } from "./auth-context"
+import useLogin from "./use-login"
 
 const useRefreshToken = () => {
 
     const { url_renovar_sesion } = Url()
+
+    const { logout } = useLogin()
 
     const refresh = async (setToken) => {
 
@@ -16,20 +20,20 @@ const useRefreshToken = () => {
         })
 
         if (!response.ok) {
+
             const ErrorData = await response.json()
+
             alert(ErrorData.message)
-            localStorage.removeItem("token")
-            setToken(null)
-            return
+
+            return await logout()
         }
 
         const data = await response.json()
 
-        localStorage.setItem("token", data.token_nuevo)
         setToken(data.token_nuevo)
         alert(data.message)
 
-        return data.token_nuevo
+        return data
     }
 
     return { refresh }

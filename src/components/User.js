@@ -1,76 +1,99 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import useUser from "../hooks/use-user";
 import { useAuth } from '../hooks/auth-context'
-import { Button, Modal, Form } from 'react-bootstrap';
+import AddUserModal from "./AddUserModal";
+import UpdateUserModal from "./UpdateUserModal";
 import Swal from "sweetalert2";
 
 const User = () => {
 
-    const [showModal, setShowModal] = useState(false)
-    const [name, setName] = useState('')
-    const [lastName, setLastName] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [phone, setPhone] = useState('')
-    const [role, setrole] = useState('')
-    const [isProcessing, setisProcessing] = useState(false)
-    const [error, setError] = useState(null)
-    const [showPassword, setShowPassword] = useState(false)
+    const [showAddModal, setShowAddModal] = useState(false)
+    const [showUpdateModal, setShowUpdateModal] = useState(false)
+    const [DataUpdate, setDataUpdate] = useState([])
 
-    const { list_user, usuarios, add_usuario } = useUser()
+    const { list_user, usuarios, enable_user, disable_user } = useUser()
     const { token } = useAuth()
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setisProcessing(true)
-        setError(null)
+    const Enable_user = async (usuario_id) => {
 
-        const dataUser = {
-            nombre: name,
-            apellido: lastName,
-            email: email,
-            password: password,
-            telefono: phone,
-            rol: role
-        }
+        const modal_enable = await Swal.fire({
+            title: "¿Estás seguro de habilitar a este usuario?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Aceptar",
+            cancelButtonText: "Cancelar",
+            customClass: {
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-danger'
+            },
+            allowOutsideClick: false,
+            allowEscapeKey: false
+        })
 
-        try {
+        if (modal_enable.isConfirmed) {
 
-            const response = await add_usuario(token, dataUser)
+            try {
 
-            if (response) {
-                await Swal.fire({
-                    title: response.message,
-                    icon: "success",
-                    draggable: false
-                })
-                setisProcessing(false)
-                clearForm()
-                setShowModal(false)
-                list_user(token)
+                const response = await enable_user(usuario_id, token)
+
+                if (response) {
+                    await Swal.fire({
+                        title: response.message,
+                        icon: "success",
+                        draggable: false,
+                        allowEscapeKey: false,
+                        allowOutsideClick: false
+                    })
+                    list_user(token)
+
+                }
+
+            } catch (error) {
+
+                alert(error.message || 'Hubo un error en el servidor')
+
             }
-
-        } catch (error) {
-
-            console.log('Error al registrar al usuario: ', error.message)
-
-            setError(error.message || 'Error al registrar al usuario')
-            setisProcessing(false)
         }
     }
 
-    const clearForm = () => {
-        setEmail('')
-        setLastName('')
-        setName('')
-        setPassword('')
-        setPhone('')
-        setrole('')
-    }
+    const Disable_user = async (usuario_id) => {
 
-    const togglePasswordVisibility = (e) => {
-        e.preventDefault();
-        setShowPassword(!showPassword)
+        const modal_enable = await Swal.fire({
+            title: "¿Estás seguro de inhabilitar a este usuario?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Aceptar",
+            cancelButtonText: "Cancelar",
+            customClass: {
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-danger'
+            },
+            allowOutsideClick: false,
+            allowEscapeKey: false
+        })
+
+        if (modal_enable.isConfirmed) {
+
+            try {
+
+                const response = await disable_user(usuario_id, token)
+
+                if (response) {
+                    await Swal.fire({
+                        title: response.message,
+                        icon: "success",
+                        draggable: false,
+                        allowEscapeKey: false,
+                        allowOutsideClick: false
+                    })
+                    list_user(token)
+                }
+
+            } catch (error) {
+
+                alert(error.message || 'Hubo un error en el servidor')
+            }
+        }
     }
 
     useEffect(() => {
@@ -80,11 +103,11 @@ const User = () => {
     return (
         <>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 className="h2"><i className="bi bi-people"></i> Usuarios</h1>
+                <h1 className="h2"><i className="bi bi-people"></i> Gestión de usuarios</h1>
             </div>
             <div className="row g-4 mb-3">
                 <div className="col col-lg-2">
-                    <button type="button" className="btn btn-success" onClick={() => setShowModal(true)}> <i className="bi bi-plus"></i> Registrar usuario</button>
+                    <button type="button" className="btn btn-success" onClick={() => setShowAddModal(true)}> <i className="bi bi-plus"></i> Registrar usuario</button>
                 </div>
                 {
                     usuarios.length > 0 ? (
@@ -120,9 +143,34 @@ const User = () => {
                                                 </td>
                                                 <td>{new Date(usuario.fecha_registro).toLocaleDateString()}</td>
                                                 <td>
+
                                                     <div className="d-flex">
-                                                        <button type="button" className={usuario.activo ? 'btn btn-danger' : 'btn btn-success'}><i className={usuario.activo ? 'bi bi-x-square' : 'bi bi-check2-square'}></i> {usuario.activo ? 'Inhabilitar' : 'Habilitar'}</button>
-                                                        <button type="button" className="btn btn-warning" style={{ marginLeft: '10px' }}><i className="bi bi-pencil-square"></i> actualizar</button>
+                                                        <button type="button" className={usuario.activo ? 'btn btn-danger' : 'btn btn-success'} onClick={() => {
+                                                            if (usuario.activo) {
+                                                                Disable_user(usuario.usuario_id)
+                                                            } else {
+                                                                Enable_user(usuario.usuario_id)
+                                                            }
+                                                        }}><i className={usuario.activo ? 'bi bi-x-square' : 'bi bi-check2-square'}></i> {usuario.activo ? 'Inhabilitar' : 'Habilitar'}</button>
+                                                        <button
+                                                            type="button"
+                                                            className="btn btn-warning"
+                                                            style={{ marginLeft: '10px' }}
+                                                            onClick={() => {
+
+                                                                const dataToupdate = {
+                                                                    usuario_id: usuario.usuario_id,
+                                                                    nombre: usuario.nombre,
+                                                                    apellido: usuario.apellido,
+                                                                    email: usuario.email,
+                                                                    telefono: usuario.telefono,
+                                                                    rol: usuario.rol
+                                                                }
+
+                                                                setDataUpdate(dataToupdate)
+                                                                setShowUpdateModal(true)
+                                                            }}
+                                                        ><i className="bi bi-pencil-square"></i> Actualizar</button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -138,126 +186,8 @@ const User = () => {
                 }
             </div >
 
-            <Modal
-                show={showModal}
-                onHide={() => {
-                    clearForm()
-                    setShowModal(false)
-                    setError(null)
-                }}
-                backdrop="static"
-                keyboard={false}
-            >
-                <Modal.Header closeButton>
-                    <Modal.Title><i className="bi bi-person-add" style={{ fontSize: '30px' }}></i> Registrar usuario</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-
-                    <Form onSubmit={handleSubmit}>
-                        {error && (
-                            <div className="alert alert-danger d-flex align-items-center" role="alert">
-                                <button className="me-2" style={{ background: 'transparent', border: 'none' }} onClick={() => setError(null)}>
-                                    <i className="bi bi-x-circle-fill"></i>
-                                </button>
-                                {error}
-                            </div>
-                        )}
-                        {isProcessing && (
-                            <div className="alert alert-info d-flex align-items-center" role="alert">
-                                <i className="bi bi-hourglass-split me-2"></i>
-                                Procesando, por favor espere...
-                            </div>
-                        )}
-                        <fieldset disabled={isProcessing}>
-                            <div className="row">
-
-                                <div className="col-md-6">
-                                    <Form.Group className="mb-3" controlId="formBasicName">
-                                        <Form.Label><i className="bi bi-file-earmark-person"></i> Nombres</Form.Label>
-                                        <Form.Control
-                                            type="text"
-                                            placeholder="Nombres del usuario"
-                                            value={name}
-                                            onChange={(e) => setName(e.target.value)}
-                                        />
-                                    </Form.Group>
-
-                                    <Form.Group className="mb-3" controlId="formBasicLastName">
-                                        <Form.Label><i className="bi bi-file-earmark-person"></i> Apellidos</Form.Label>
-                                        <Form.Control
-                                            type="text"
-                                            placeholder="Apellidos del usuario"
-                                            value={lastName}
-                                            onChange={(e) => setLastName(e.target.value)}
-                                        />
-                                    </Form.Group>
-
-                                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                                        <Form.Label><i className="bi bi-envelope"></i> Correo electrónico</Form.Label>
-                                        <Form.Control
-                                            type="email"
-                                            placeholder="Email del usuario"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                        />
-                                    </Form.Group>
-                                </div>
-
-                                <div className="col-md-6">
-                                    <Form.Group className="mb-3" controlId="formBasicPhone">
-                                        <Form.Label><i className="bi bi-telephone"></i> Teléfono</Form.Label>
-                                        <Form.Control
-                                            type="text"
-                                            placeholder="Teléfono del usuario"
-                                            value={phone}
-                                            onChange={(e) => setPhone(e.target.value)}
-                                        />
-                                    </Form.Group>
-
-                                    <Form.Group className="mb-3" controlId="formBasicPassword">
-                                        <Form.Label><i className="bi bi-lock"></i> Contraseña</Form.Label>
-                                        <div className="input-group">
-                                            <Form.Control
-                                                type={showPassword ? 'text' : 'password'}
-                                                placeholder="Contraseña"
-                                                value={password}
-                                                onChange={(e) => setPassword(e.target.value)}
-                                            />
-                                            <button className="input-group-text" onClick={togglePasswordVisibility}><i className={showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'}></i></button>
-                                        </div>
-                                    </Form.Group>
-
-                                    <Form.Group className="mb-3" controlId="formBasicRol">
-                                        <Form.Label><i className="bi bi-person-vcard"></i> Rol del usuario</Form.Label>
-                                        <Form.Select value={role} onChange={(e) => setrole(e.target.value)}>
-                                            <option>administrador</option>
-                                            <option>profesor</option>
-                                            <option>estudiante</option>
-                                        </Form.Select>
-                                    </Form.Group>
-                                </div>
-
-                            </div>
-
-                            <hr />
-
-                            <div className="d-flex justify-content-end gap-2">
-                                <Button variant="success" type="submit">
-                                    <i className="bi bi-check-lg"></i> Registrar
-                                </Button>
-                                <Button variant="danger" onClick={() => {
-                                    clearForm()
-                                    setShowModal(false)
-                                    setError(null)
-                                }}>
-                                    <i className="bi bi-x"></i> Cancelar
-                                </Button>
-                            </div>
-                        </fieldset>
-                    </Form>
-
-                </Modal.Body>
-            </Modal >
+            <AddUserModal showModal={showAddModal} setShowModal={setShowAddModal} list_user={list_user} token={token} />
+            <UpdateUserModal showModal={showUpdateModal} setShowModal={setShowUpdateModal} DataUpdate={DataUpdate} token={token} list_user={list_user} />
         </>
     )
 }

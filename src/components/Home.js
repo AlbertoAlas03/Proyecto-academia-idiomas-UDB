@@ -3,6 +3,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Footer from './Footer'
 import Dashboard from './Dashboard';
 import User from './User';
+import Language from './Language';
 import useLogin from '../hooks/use-login';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/auth-context';
@@ -20,7 +21,7 @@ const Home = () => {
 
         const modal = await Swal.fire({
             title: "¿Estás seguro que deseas cerrar sesión?",
-            icon: "warning",
+            icon: "question",
             showCancelButton: true,
             confirmButtonText: "Aceptar",
             cancelButtonText: "Cancelar",
@@ -93,12 +94,16 @@ const Home = () => {
                         <hr />
                         <TabList className="nav nav-pills flex-column mb-auto">
                             <Tab type="button" className="nav-link d-flex align-items-center gap-2 text-white" aria-current="page" style={{ fontSize: '20px' }}>
-                                <i className="bi bi-speedometer2"></i>
+                                <i className="bi bi-house"></i>
                                 Dashboard
+                            </Tab>
+                            <Tab type="button" className="nav-link d-flex align-items-center gap-2 text-white" aria-current="page" style={{ fontSize: '20px' }}>
+                                <i className="bi bi-translate"></i>
+                                Gestión idiomas
                             </Tab>
                             <Tab type="button" className="nav-link d-flex align-items-center gap-2 text-white" style={{ fontSize: '20px' }}>
                                 <i className="bi bi-people"></i>
-                                Usuarios
+                                Gestión usuarios
                             </Tab>
                         </TabList>
                         <hr />
@@ -118,6 +123,9 @@ const Home = () => {
                         <div className="col-12 px-md-4 pt-3">
                             <TabPanel>
                                 <Dashboard />
+                            </TabPanel>
+                            <TabPanel>
+                                <Language />
                             </TabPanel>
                             <TabPanel>
                                 <User />

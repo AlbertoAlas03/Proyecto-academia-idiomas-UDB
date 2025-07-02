@@ -5,7 +5,7 @@ const useLogin = () => {
 
     const { url_login, url_logout } = Url()
 
-    const { setToken } = useAuth()
+    const { setToken, setUser } = useAuth()
 
     const login = async (usuario) => {
 
@@ -31,8 +31,8 @@ const useLogin = () => {
 
         const data = await response.json()
 
-        localStorage.setItem("token", data.token)
         setToken(data.token)
+        setUser(data.usuario)
 
         return data
     }
@@ -55,8 +55,8 @@ const useLogin = () => {
 
         const data = await response.json()
 
-        localStorage.removeItem("token")
         setToken(null)
+        setUser([])
 
         return data
     }
