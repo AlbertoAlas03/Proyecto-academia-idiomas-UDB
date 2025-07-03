@@ -107,7 +107,7 @@ const User = () => {
             </div>
             <div className="row g-4 mb-3">
                 <div className="col col-lg-2">
-                    <button type="button" className="btn btn-success" onClick={() => setShowAddModal(true)}> <i className="bi bi-plus"></i> Registrar usuario</button>
+                    <button type="button" className="btn btn-success" onClick={() => setShowAddModal(true)}><i className="bi bi-person-add"></i> Registrar usuario</button>
                 </div>
                 {
                     usuarios.length > 0 ? (

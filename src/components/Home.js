@@ -5,6 +5,7 @@ import Dashboard from './Dashboard';
 import User from './User';
 import Language from './Language';
 import useLogin from '../hooks/use-login';
+import Course from './Course';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/auth-context';
 import Swal from 'sweetalert2';
@@ -101,6 +102,10 @@ const Home = () => {
                                 <i className="bi bi-translate"></i>
                                 Gestión idiomas
                             </Tab>
+                            <Tab type="button" className="nav-link d-flex align-items-center gap-2 text-white" aria-current="page" style={{ fontSize: '20px' }}>
+                                <i className="bi bi-journal"></i>
+                                Gestión cursos
+                            </Tab>
                             <Tab type="button" className="nav-link d-flex align-items-center gap-2 text-white" style={{ fontSize: '20px' }}>
                                 <i className="bi bi-people"></i>
                                 Gestión usuarios
@@ -126,6 +131,9 @@ const Home = () => {
                             </TabPanel>
                             <TabPanel>
                                 <Language />
+                            </TabPanel>
+                            <TabPanel>
+                                <Course />
                             </TabPanel>
                             <TabPanel>
                                 <User />

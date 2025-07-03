@@ -166,9 +166,10 @@ const AddUserModal = ({ showModal, setShowModal, list_user, token }) => {
                                 <Form.Group className="mb-3" controlId="formBasicRol">
                                     <Form.Label><i className="bi bi-person-vcard"></i> Rol del usuario</Form.Label>
                                     <Form.Select value={role} onChange={(e) => setrole(e.target.value)}>
-                                        <option>administrador</option>
-                                        <option>profesor</option>
-                                        <option>estudiante</option>
+                                        <option value=''>Seleccionar rol</option>
+                                        <option value='administrador'>administrador</option>
+                                        <option value='profesor'>profesor</option>
+                                        <option value='estudiante'>estudiante</option>
                                     </Form.Select>
                                 </Form.Group>
                             </div>

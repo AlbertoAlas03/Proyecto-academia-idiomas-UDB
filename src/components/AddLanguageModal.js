@@ -76,7 +76,7 @@ const AddLanguageModal = ({ showModal, setShowModal, list_idiomas, token }) => {
                     <fieldset disabled={isProcessing}>
                         <div className="row">
 
-                            <Form.Group className="mb-3" controlId="formBasicName">
+                            <Form.Group className="mb-3" controlId="formBasicNameLanguage">
                                 <Form.Label><i className="bi bi-translate"></i> Nombre</Form.Label>
                                 <Form.Control
                                     type="text"
