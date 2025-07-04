@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/auth-context'
 import AddUserModal from "./AddUserModal";
 import UpdateUserModal from "./UpdateUserModal";
 import Swal from "sweetalert2";
+import NoData from "./NoData";
 
 const User = () => {
 
@@ -141,7 +142,7 @@ const User = () => {
                                                         {usuario.activo ? 'Activo' : 'Inactivo'}
                                                     </span>
                                                 </td>
-                                                <td>{new Date(usuario.fecha_registro).toLocaleDateString()}</td>
+                                                <td>{new Date(usuario.fecha_registro).toISOString().split('T')[0]}</td>
                                                 <td>
 
                                                     <div className="d-flex">
@@ -181,7 +182,7 @@ const User = () => {
                             </table>
                         </div>
                     ) : (
-                        <div>sin registros</div>
+                        <NoData />
                     )
                 }
             </div >

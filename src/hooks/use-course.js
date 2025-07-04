@@ -8,7 +8,7 @@ const useCourse = () => {
 
     const [course, setCourse] = useState([])
 
-    const { url_list_cursos, url_add_curso } = Url()
+    const { url_list_cursos, url_add_curso, url_delete_curso, url_update_curso } = Url()
 
     const { refresh } = useRefreshToken()
 
@@ -80,7 +80,7 @@ const useCourse = () => {
 
 
     const add_course = async (token, data_course) => {
-
+      
         const Data = {
             idioma_id: data_course.idioma_id,
             nombre: data_course.nombre,
@@ -92,6 +92,7 @@ const useCourse = () => {
             fecha_fin: data_course.fecha_fin,
             capacidad_maxima: data_course.capacidad_maxima
         }
+        
 
         const response = await fetch(url_add_curso, {
             method: 'POST',
@@ -154,7 +155,146 @@ const useCourse = () => {
         return data
     }
 
-    return { list_course, course, add_course }
+    const delete_course = async (token, curso_id) => {
+
+        const response = await fetch(url_delete_curso, {
+            method: 'DELETE',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ curso_id })
+        })
+
+        if (!response.ok) {
+
+            const ErrorData = await response.json()
+
+            if (ErrorData.message_about_token) {
+
+                const modal_validacion = window.confirm('Tu sesión a expirado, ¿Desea renovarla?')
+
+                if (modal_validacion) {
+
+                    const response_token = await refresh(setToken)
+
+                    const token_nuevo = response_token.token_nuevo
+
+                    if (token_nuevo) {
+
+                        return await delete_course(token_nuevo, curso_id)
+
+                    } else {
+                        return
+                    }
+
+                } else {
+                    try {
+
+                        const response_logout = await logout()
+
+                        if (response_logout) {
+                            alert(response_logout.message)
+                            return
+                        }
+
+                    } catch (error) {
+
+                        console.log('Error al cerrar sesion: ', error.message)
+                        alert(error.message)
+                        return
+                    }
+
+                }
+
+            } else {
+                throw new Error(ErrorData.message || 'Error en el servidor')
+            }
+        }
+
+        const data = await response.json()
+
+        return data
+    }
+
+    const update_course = async (token, UpdateData) => {
+
+        const Data = {
+            curso_id: UpdateData.curso_id,
+            idioma_id: UpdateData.idioma_id,
+            nombre: UpdateData.nombre,
+            descripcion: UpdateData.descripcion,
+            programa: UpdateData.programa,
+            modalidad: UpdateData.modalidad,
+            horario: UpdateData.horario,
+            fecha_inicio: UpdateData.fecha_inicio,
+            fecha_fin: UpdateData.fecha_fin,
+            capacidad_maxima: UpdateData.capacidad_maxima
+        }
+
+        const response = await fetch(url_update_curso, {
+            method: 'PUT',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(Data)
+        })
+
+        if (!response.ok) {
+
+            const ErrorData = await response.json()
+
+            if (ErrorData.message_about_token) {
+
+                const modal_validacion = window.confirm('Tu sesión a expirado, ¿Desea renovarla?')
+
+                if (modal_validacion) {
+
+                    const response_token = await refresh(setToken)
+
+                    const token_nuevo = response_token.token_nuevo
+
+                    if (token_nuevo) {
+
+                        return await update_course(token_nuevo, UpdateData)
+
+                    } else {
+                        return
+                    }
+
+                } else {
+                    try {
+
+                        const response_logout = await logout()
+
+                        if (response_logout) {
+                            alert(response_logout.message)
+                            return
+                        }
+
+                    } catch (error) {
+
+                        console.log('Error al cerrar sesion: ', error.message)
+                        alert(error.message)
+                        return
+                    }
+
+                }
+
+            } else {
+                throw new Error(ErrorData.message || 'Error en el servidor')
+            }
+        }
+
+        const data = await response.json()
+
+        return data
+    }
+
+    return { list_course, course, add_course, delete_course, update_course }
 }
 
 export default useCourse

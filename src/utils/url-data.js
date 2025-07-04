@@ -18,6 +18,8 @@ const Url = () => {
     const url_update_idioma = data + 'update_idioma'
     const url_list_cursos = data + 'list_cursos'
     const url_add_curso = data + 'add_curso'
+    const url_delete_curso = data + 'delete_curso'
+    const url_update_curso = data + 'update_curso'
 
     return {
         url_login,
@@ -35,7 +37,9 @@ const Url = () => {
         url_delete_idioma,
         url_update_idioma,
         url_list_cursos,
-        url_add_curso
+        url_add_curso,
+        url_delete_curso,
+        url_update_curso
     }
 }
 

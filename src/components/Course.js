@@ -2,14 +2,86 @@ import { useEffect, useState } from "react"
 import useCourse from "../hooks/use-course"
 import { useAuth } from "../hooks/auth-context"
 import AddCourseModal from "./AddCourseModal"
+import NoData from './NoData'
+import Swal from "sweetalert2"
+import UpdateCourseModal from "./UpdateCourseModal"
 
 const Course = () => {
 
     const [showAddModal, setShowAddModal] = useState(false)
+    const [showUpdateModal, setShowUpdateModal] = useState(false)
+    const [updateData, setUpdateData] = useState([])
 
-    const { list_course, course } = useCourse()
+    const { list_course, course, delete_course } = useCourse()
 
     const { token } = useAuth()
+
+    const handleDelete = async (curso_id) => {
+
+        const response_modal = await Swal.fire({
+            title: "¿Estas seguro de eliminar este curso?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar',
+            customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger",
+            },
+            allowEscapeKey: false,
+            allowOutsideClick: false
+        })
+
+        if (response_modal.isConfirmed) {
+
+            try {
+
+                const response = await delete_course(token, curso_id)
+
+                if (response) {
+                    await Swal.fire({
+                        title: response.message,
+                        icon: "success",
+                        draggable: false,
+                        allowEscapeKey: false,
+                        allowOutsideClick: false
+                    })
+                    list_course(token)
+                }
+
+            } catch (error) {
+
+                await Swal.fire({
+                    title: error.message,
+                    icon: "error",
+                    draggable: false,
+                    allowEscapeKey: false,
+                    allowOutsideClick: false
+                })
+            }
+        }
+
+    }
+
+    const Modal_warning_delete = async () => {
+        await Swal.fire({
+            title: "¡No puedes eliminar este curso, por que esta activo!",
+            icon: "error",
+            draggable: false,
+            allowEscapeKey: false,
+            allowOutsideClick: false
+        })
+    }
+
+    const modal_warning_udpate = async () => {
+        await Swal.fire({
+            title: "¡No puedes actualizar este curso!",
+            icon: "error",
+            draggable: false,
+            allowEscapeKey: false,
+            allowOutsideClick: false
+        })
+    }
 
     useEffect(() => {
         list_course(token)
@@ -54,8 +126,8 @@ const Course = () => {
                                                 <td>{Course.programa}</td>
                                                 <td>{Course.modalidad}</td>
                                                 <td>{Course.horario}</td>
-                                                <td>{new Date(Course.fecha_inicio).toLocaleDateString()}</td>
-                                                <td>{new Date(Course.fecha_fin).toLocaleDateString()}</td>
+                                                <td>{new Date(Course.fecha_inicio).toISOString().split('T')[0]}</td>
+                                                <td>{new Date(Course.fecha_fin).toISOString().split('T')[0]}</td>
                                                 <td className="text-center">{Course.capacidad_maxima}</td>
                                                 <td className="text-center">
                                                     <span className={
@@ -70,13 +142,40 @@ const Course = () => {
                                                     <div className="d-flex">
                                                         <button type="button" className='btn btn-warning' onClick={() => {
 
+                                                            if (Course.estado === 'activo' || Course.estado === 'finalizado') {
+                                                                modal_warning_udpate()
+                                                            } else {
+
+                                                                const data = {
+                                                                    curso_id: Course.curso_id,
+                                                                    idioma_id: Course.idioma.idioma_id,
+                                                                    nombre: Course.nombre,
+                                                                    descripcion: Course.descripcion,
+                                                                    programa: Course.programa,
+                                                                    modalidad: Course.modalidad,
+                                                                    horario: Course.horario,
+                                                                    fecha_inicio: new Date(Course.fecha_inicio).toISOString().split('T')[0],
+                                                                    fecha_fin: new Date(Course.fecha_fin).toISOString().split('T')[0],
+                                                                    capacidad_maxima: Course.capacidad_maxima
+                                                                }
+
+                                                                setUpdateData(data)
+
+                                                                setShowUpdateModal(true)
+                                                            }
 
                                                         }}><i className='bi bi-pencil-square'></i> Actualizar</button>
                                                         <button
                                                             type="button"
                                                             className="btn btn-danger"
                                                             style={{ marginLeft: '10px' }}
-                                                            onClick={() => { }}
+                                                            onClick={() => {
+                                                                if (Course.estado === 'activo') {
+                                                                    Modal_warning_delete()
+                                                                } else {
+                                                                    handleDelete(Course.curso_id)
+                                                                }
+                                                            }}
                                                         ><i className="bi bi-trash3"></i> Eliminar</button>
                                                     </div>
                                                 </td>
@@ -88,15 +187,13 @@ const Course = () => {
                             </table>
                         </div>
                     ) : (
-                        <div>sin registros</div>
+                        <NoData />
                     )
                 }
             </div >
 
             <AddCourseModal showModal={showAddModal} setShowModal={setShowAddModal} token={token} list_course={list_course} />
-
-            {/* <AddLanguageModal showModal={showAddModal} setShowModal={setShowAddModal} list_idiomas={list_idiomas} token={token} />
-            <UpdateLanguageModal showModal={showUpdateModal} setShowModal={setShowUpdateModal} updateData={updateData} token={token} list_idiomas={list_idiomas} setUpdateData={setUpdateData} /> */}
+            <UpdateCourseModal showModal={showUpdateModal} setShowModal={setShowUpdateModal} updateData={updateData} setUpdateData={setUpdateData} token={token} list_course={list_course} />
         </>
     )
 }

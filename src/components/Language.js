@@ -4,6 +4,7 @@ import { useAuth } from "../hooks/auth-context"
 import AddLanguageModal from "./AddLanguageModal"
 import UpdateLanguageModal from "./UpdateLanguageModal"
 import Swal from "sweetalert2"
+import NoData from "./NoData"
 
 const Language = () => {
 
@@ -92,7 +93,7 @@ const Language = () => {
                                             <tr key={Language.idioma_id}>
                                                 <th scope="row">{Language.idioma_id}</th>
                                                 <td>{Language.nombre}</td>
-                                                <td>{new Date(Language.createdAt).toLocaleDateString()}</td>
+                                                <td>{new Date(Language.createdAt).toISOString().split('T')[0]}</td>
                                                 <td>
                                                     <div className="d-flex">
                                                         <button type="button" className='btn btn-warning' onClick={() => {
@@ -122,7 +123,7 @@ const Language = () => {
                             </table>
                         </div>
                     ) : (
-                        <div>sin registros</div>
+                        <NoData />
                     )
                 }
             </div >
