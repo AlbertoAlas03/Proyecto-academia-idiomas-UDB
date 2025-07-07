@@ -5,16 +5,48 @@ import AddLanguageModal from "./AddLanguageModal"
 import UpdateLanguageModal from "./UpdateLanguageModal"
 import Swal from "sweetalert2"
 import NoData from "./NoData"
+import Select from "react-select"
 
 const Language = () => {
 
     const [showAddModal, setShowAddModal] = useState(false)
     const [showUpdateModal, setShowUpdateModal] = useState(false)
     const [updateData, setUpdateData] = useState([])
+    const [LanguageSelected, setLanguageSelected] = useState(null)
+    const [idiomaID, setidiomaID] = useState('')
+    const [isSearching, setisSearching] = useState(false)
 
-    const { list_idiomas, language, delete_idioma } = useLanguage()
+    const { list_idiomas, language, delete_idioma, search_idioma, search, setsearch } = useLanguage()
 
     const { token } = useAuth()
+
+    const optionsLanguage = language.map((l) => ({
+        value: l.idioma_id,
+        label: `${l.nombre}`
+    }));
+
+    const handleChangeLanguage = (LanguageSelected) => {
+
+        setLanguageSelected(LanguageSelected)
+        setidiomaID(LanguageSelected ? LanguageSelected.value : '')
+    }
+
+    const handleSearch = async () => {
+        try {
+
+            await search_idioma(token, idiomaID)
+            setisSearching(true)
+        } catch (error) {
+
+            await Swal.fire({
+                title: error.message,
+                icon: "warning",
+                draggable: false,
+                allowEscapeKey: false,
+                allowOutsideClick: false
+            })
+        }
+    }
 
     const handleDelete = async (idioma_id) => {
 
@@ -62,6 +94,13 @@ const Language = () => {
         }
     }
 
+    const handleReset = () => {
+        setisSearching(false)
+        setLanguageSelected(null)
+        setidiomaID('')
+        setsearch(null)
+    }
+
     useEffect(() => {
         list_idiomas(token)
     }, [])
@@ -71,12 +110,39 @@ const Language = () => {
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 className="h2"><i className="bi bi-translate"></i> Gestión de idiomas</h1>
             </div>
-            <div className="row g-4 mb-3">
-                <div className="col col-lg-2">
-                    <button type="button" className="btn btn-success" onClick={() => setShowAddModal(true)}> <i className="bi bi-plus"></i> Registrar nuevo idioma</button>
+            <div className="row g-4 mb-3 align-items-center">
+                <div className="col-auto">
+                    <button type="button" className="btn btn-success" onClick={() => setShowAddModal(true)}>
+                        <i className="bi bi-plus"></i> Registrar nuevo idioma
+                    </button>
+                </div>
+                <div className="col ms-auto">
+                    <div className="d-flex" style={{ maxWidth: '400px', marginLeft: 'auto' }}>
+                        <Select
+                            isDisabled={isSearching}
+                            className="w-100"
+                            options={optionsLanguage}
+                            value={LanguageSelected}
+                            onChange={handleChangeLanguage}
+                            placeholder="Buscar idioma..."
+                            isClearable
+                            noOptionsMessage={() => 'No hay coincidencias'}
+                        />
+                        <button type="button" className={isSearching ? 'btn btn-success' : 'btn btn-primary'} style={{ marginLeft: '5px' }}
+                            onClick={() => {
+                                if (isSearching) {
+                                    handleReset()
+                                } else {
+                                    handleSearch()
+                                }
+
+                            }}>
+                            <i className={isSearching ? 'bi bi-arrow-repeat' : 'bi bi-search'}></i>
+                        </button>
+                    </div>
                 </div>
                 {
-                    language.length > 0 ? (
+                    search ? (
                         <div className="table-responsive">
                             <table className="table table-striped table-hover">
                                 <thead>
@@ -89,42 +155,83 @@ const Language = () => {
                                 </thead>
                                 <tbody>
                                     {
-                                        language.map((Language) => (
-                                            <tr key={Language.idioma_id}>
-                                                <th scope="row">{Language.idioma_id}</th>
-                                                <td>{Language.nombre}</td>
-                                                <td>{new Date(Language.createdAt).toISOString().split('T')[0]}</td>
-                                                <td>
-                                                    <div className="d-flex">
-                                                        <button type="button" className='btn btn-warning' onClick={() => {
-                                                            setShowUpdateModal(true)
+                                        <tr key={search.idioma_id}>
+                                            <th scope="row">{search.idioma_id}</th>
+                                            <td>{search.nombre}</td>
+                                            <td>{search.createdAt ? new Date(search?.createdAt).toISOString().split('T')[0] : 'fecha no disponible'}</td>
+                                            <td>
+                                                <div className="d-flex">
+                                                    <button type="button" className='btn btn-warning' onClick={() => {
 
-                                                            const data = {
-                                                                idioma_id: Language.idioma_id,
-                                                                nombre: Language.nombre
-                                                            }
 
-                                                            setUpdateData(data)
+                                                    }}><i className='bi bi-pencil-square'></i> Actualizar</button>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-danger"
+                                                        style={{ marginLeft: '10px' }}
+                                                        onClick={() => { }}
+                                                    ><i className="bi bi-trash3"></i> Eliminar</button>
+                                                </div>
+                                            </td>
+                                        </tr>
 
-                                                        }}><i className='bi bi-pencil-square'></i> Actualizar</button>
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-danger"
-                                                            style={{ marginLeft: '10px' }}
-                                                            onClick={() => handleDelete(Language.idioma_id)}
-                                                        ><i className="bi bi-trash3"></i> Eliminar</button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))
                                     }
 
                                 </tbody>
                             </table>
                         </div>
                     ) : (
-                        <NoData />
+                        language.length > 0 ? (
+                            <div className="table-responsive">
+                                <table className="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Nombre</th>
+                                            <th scope="col">Fecha registro</th>
+                                            <th scope="col">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            language.map((Language) => (
+                                                <tr key={Language.idioma_id}>
+                                                    <th scope="row">{Language.idioma_id}</th>
+                                                    <td>{Language.nombre}</td>
+                                                    <td>{new Date(Language.createdAt).toISOString().split('T')[0]}</td>
+                                                    <td>
+                                                        <div className="d-flex">
+                                                            <button type="button" className='btn btn-warning' onClick={() => {
+                                                                setShowUpdateModal(true)
+
+                                                                const data = {
+                                                                    idioma_id: Language.idioma_id,
+                                                                    nombre: Language.nombre
+                                                                }
+
+                                                                setUpdateData(data)
+
+                                                            }}><i className='bi bi-pencil-square'></i> Actualizar</button>
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn-danger"
+                                                                style={{ marginLeft: '10px' }}
+                                                                onClick={() => handleDelete(Language.idioma_id)}
+                                                            ><i className="bi bi-trash3"></i> Eliminar</button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        }
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <NoData />
+                        )
                     )
+
                 }
             </div >
 

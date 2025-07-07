@@ -7,8 +7,9 @@ import useLogin from "./use-login"
 const useLanguage = () => {
 
     const [language, setLenguage] = useState([])
+    const [search, setsearch] = useState(null)
 
-    const { url_list_idiomas, url_add_idioma, url_delete_idioma, url_update_idioma } = Url()
+    const { url_list_idiomas, url_add_idioma, url_delete_idioma, url_update_idioma, url_search_idioma } = Url()
 
     const { refresh } = useRefreshToken()
 
@@ -272,7 +273,72 @@ const useLanguage = () => {
         return data
     }
 
-    return { list_idiomas, language, add_idioma, delete_idioma, update_idioma }
+    const search_idioma = async (token, idioma_id) => {
+
+        const response = await fetch(url_search_idioma, {
+            method: 'POST',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ idioma_id })
+        })
+
+        if (!response.ok) {
+
+            const ErrorData = await response.json()
+
+            if (ErrorData.message_about_token) {
+
+                const modal_validacion = window.confirm('Tu sesión a expirado, ¿Desea renovarla?')
+
+                if (modal_validacion) {
+
+                    const response_token = await refresh(setToken)
+
+                    const token_nuevo = response_token.token_nuevo
+
+                    if (token_nuevo) {
+
+                        return await search_idioma(token_nuevo)
+
+                    } else {
+                        return
+                    }
+
+                } else {
+                    try {
+
+                        const response_logout = await logout()
+
+                        if (response_logout) {
+                            alert(response_logout.message)
+                            return
+                        }
+
+                    } catch (error) {
+
+                        console.log('Error al cerrar sesion: ', error.message)
+                        alert(error.message)
+                        return
+                    }
+
+                }
+
+            } else {
+                throw new Error(ErrorData.message || 'Error en el servidor')
+            }
+        }
+
+        const data = await response.json()
+
+        setsearch(data.data)
+
+        return data
+    }
+
+    return { list_idiomas, language, add_idioma, delete_idioma, update_idioma, search_idioma, search, setsearch }
 
 }
 

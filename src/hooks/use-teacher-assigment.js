@@ -1,15 +1,15 @@
-import { useState } from "react"
 import Url from "../utils/url-data"
 import useRefreshToken from "./use-refreshToken"
 import { useAuth } from "./auth-context"
+import { useState } from "react"
 import useLogin from "./use-login"
 
-const useCourse = () => {
+const useTeacherAssigment = () => {
 
-    const [course, setCourse] = useState([])
-    const [course_not_started, setcourse_not_started] = useState([])
+    const [teacherAssigment, setTeacherAssigment] = useState([])
+    const [teacher, setTeacher] = useState([])
 
-    const { url_list_cursos, url_add_curso, url_delete_curso, url_update_curso, url_list_cursos_no_iniciados } = Url()
+    const { url_list_profesores_asignados, url_list_profesores, url_assign_teacher, url_delete_assignment, url_update_assignment } = Url()
 
     const { refresh } = useRefreshToken()
 
@@ -17,9 +17,9 @@ const useCourse = () => {
 
     const { logout } = useLogin()
 
-    const list_course = async (token) => {
+    const list_teacher_assigment = async (token) => {
 
-        const response = await fetch(url_list_cursos, {
+        const response = await fetch(url_list_profesores_asignados, {
             method: 'GET',
             headers: {
                 "Accept": "application/json",
@@ -44,7 +44,7 @@ const useCourse = () => {
 
                     if (token_nuevo) {
 
-                        return await list_course(token_nuevo)
+                        return await list_teacher_assigment(token_nuevo)
 
                     } else {
                         return
@@ -76,26 +76,79 @@ const useCourse = () => {
 
         const data = await response.json()
 
-        setCourse(data.data)
+        setTeacherAssigment(data.data)
     }
 
+    const list_teachers = async (token) => {
 
-    const add_course = async (token, data_course) => {
+        const response = await fetch(url_list_profesores, {
+            method: 'GET',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`
+            }
+        })
 
-        const Data = {
-            idioma_id: data_course.idioma_id,
-            nombre: data_course.nombre,
-            descripcion: data_course.descripcion,
-            programa: data_course.programa,
-            modalidad: data_course.modalidad,
-            horario: data_course.horario,
-            fecha_inicio: data_course.fecha_inicio,
-            fecha_fin: data_course.fecha_fin,
-            capacidad_maxima: data_course.capacidad_maxima
+        if (!response.ok) {
+
+            const ErrorData = await response.json()
+
+            if (ErrorData.message_about_token) {
+
+                const modal_validacion = window.confirm('Tu sesión a expirado, ¿Desea renovarla?')
+
+                if (modal_validacion) {
+
+                    const response_token = await refresh(setToken)
+
+                    const token_nuevo = response_token.token_nuevo
+
+                    if (token_nuevo) {
+
+                        return await list_teachers(token_nuevo)
+
+                    } else {
+                        return
+                    }
+
+                } else {
+                    try {
+
+                        const response_logout = await logout()
+
+                        if (response_logout) {
+                            alert(response_logout.message)
+                            return
+                        }
+
+                    } catch (error) {
+
+                        console.log('Error al cerrar sesion: ', error.message)
+                        alert(error.message)
+                        return
+                    }
+
+                }
+
+            } else {
+                throw new Error(ErrorData.message || 'Error en el servidor')
+            }
         }
 
+        const data = await response.json()
 
-        const response = await fetch(url_add_curso, {
+        setTeacher(data.data)
+    }
+
+    const assign_teacher = async (token, data_assignment) => {
+
+        const Data = {
+            curso_id: data_assignment.curso_id,
+            profesor_id: data_assignment.profesor_id
+        }
+
+        const response = await fetch(url_assign_teacher, {
             method: 'POST',
             headers: {
                 "Accept": "application/json",
@@ -121,7 +174,7 @@ const useCourse = () => {
 
                     if (token_nuevo) {
 
-                        return await add_course(token_nuevo, data_course)
+                        return await assign_teacher(token_nuevo, data_assignment)
 
                     } else {
                         return
@@ -156,16 +209,16 @@ const useCourse = () => {
         return data
     }
 
-    const delete_course = async (token, curso_id) => {
+    const delete_assingment = async (token, asignacion_id) => {
 
-        const response = await fetch(url_delete_curso, {
+        const response = await fetch(url_delete_assignment, {
             method: 'DELETE',
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             },
-            body: JSON.stringify({ curso_id })
+            body: JSON.stringify({ asignacion_id })
         })
 
         if (!response.ok) {
@@ -184,7 +237,7 @@ const useCourse = () => {
 
                     if (token_nuevo) {
 
-                        return await delete_course(token_nuevo, curso_id)
+                        return await delete_assingment(token_nuevo, asignacion_id)
 
                     } else {
                         return
@@ -219,22 +272,15 @@ const useCourse = () => {
         return data
     }
 
-    const update_course = async (token, UpdateData) => {
+    const update_assignment = async (token, updateData) => {
 
         const Data = {
-            curso_id: UpdateData.curso_id,
-            idioma_id: UpdateData.idioma_id,
-            nombre: UpdateData.nombre,
-            descripcion: UpdateData.descripcion,
-            programa: UpdateData.programa,
-            modalidad: UpdateData.modalidad,
-            horario: UpdateData.horario,
-            fecha_inicio: UpdateData.fecha_inicio,
-            fecha_fin: UpdateData.fecha_fin,
-            capacidad_maxima: UpdateData.capacidad_maxima
+            asignacion_id: updateData.asignacion_id,
+            curso_id: updateData.curso_id,
+            profesor_id: updateData.profesor_id
         }
 
-        const response = await fetch(url_update_curso, {
+        const response = await fetch(url_update_assignment, {
             method: 'PUT',
             headers: {
                 "Accept": "application/json",
@@ -260,7 +306,7 @@ const useCourse = () => {
 
                     if (token_nuevo) {
 
-                        return await update_course(token_nuevo, UpdateData)
+                        return await update_assignment(token_nuevo, updateData)
 
                     } else {
                         return
@@ -293,71 +339,10 @@ const useCourse = () => {
         const data = await response.json()
 
         return data
+
     }
 
-    const list_cursos_no_iniciados = async (token) => {
-
-        const response = await fetch(url_list_cursos_no_iniciados, {
-            method: 'GET',
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "authorization": `Bearer ${token}`
-            }
-        })
-
-        if (!response.ok) {
-
-            const ErrorData = await response.json()
-
-            if (ErrorData.message_about_token) {
-
-                const modal_validacion = window.confirm('Tu sesión a expirado, ¿Desea renovarla?')
-
-                if (modal_validacion) {
-
-                    const response_token = await refresh(setToken)
-
-                    const token_nuevo = response_token.token_nuevo
-
-                    if (token_nuevo) {
-
-                        return await list_cursos_no_iniciados(token_nuevo)
-
-                    } else {
-                        return
-                    }
-
-                } else {
-                    try {
-
-                        const response_logout = await logout()
-
-                        if (response_logout) {
-                            alert(response_logout.message)
-                            return
-                        }
-
-                    } catch (error) {
-
-                        console.log('Error al cerrar sesion: ', error.message)
-                        alert(error.message)
-                        return
-                    }
-
-                }
-
-            } else {
-                throw new Error(ErrorData.message || 'Error en el servidor')
-            }
-        }
-
-        const data = await response.json()
-
-        setcourse_not_started(data.data)
-    }
-
-    return { list_course, course, add_course, delete_course, update_course, list_cursos_no_iniciados, course_not_started }
+    return { list_teacher_assigment, teacherAssigment, list_teachers, teacher, assign_teacher, delete_assingment, update_assignment }
 }
 
-export default useCourse
+export default useTeacherAssigment

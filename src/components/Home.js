@@ -9,6 +9,7 @@ import Course from './Course';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/auth-context';
 import Swal from 'sweetalert2';
+import TeacherAssigment from './TeacherAssigment';
 
 const Home = () => {
 
@@ -106,6 +107,10 @@ const Home = () => {
                                 <i className="bi bi-journal"></i>
                                 Gestión cursos
                             </Tab>
+                            <Tab type="button" className="nav-link d-flex align-items-center gap-2 text-white" aria-current="page" style={{ fontSize: '20px' }}>
+                                <i className="bi bi-person-video3"></i>
+                                Asignación de profesores
+                            </Tab>
                             <Tab type="button" className="nav-link d-flex align-items-center gap-2 text-white" style={{ fontSize: '20px' }}>
                                 <i className="bi bi-people"></i>
                                 Gestión usuarios
@@ -134,6 +139,9 @@ const Home = () => {
                             </TabPanel>
                             <TabPanel>
                                 <Course />
+                            </TabPanel>
+                            <TabPanel>
+                                <TeacherAssigment />
                             </TabPanel>
                             <TabPanel>
                                 <User />

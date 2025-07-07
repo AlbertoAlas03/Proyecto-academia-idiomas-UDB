@@ -20,6 +20,13 @@ const Url = () => {
     const url_add_curso = data + 'add_curso'
     const url_delete_curso = data + 'delete_curso'
     const url_update_curso = data + 'update_curso'
+    const url_list_profesores_asignados = data + 'list_profesores_cursos'
+    const url_list_profesores = data + 'list_usuarios_profesores'
+    const url_list_cursos_no_iniciados = data + 'list_cursos_no_iniciados'
+    const url_assign_teacher = data + 'asignar_curso_profesor'
+    const url_delete_assignment = data + 'delete_profesor_curso'
+    const url_update_assignment = data + 'update_profesor_curso'
+    const url_search_idioma = data + 'search_idioma'
 
     return {
         url_login,
@@ -39,7 +46,14 @@ const Url = () => {
         url_list_cursos,
         url_add_curso,
         url_delete_curso,
-        url_update_curso
+        url_update_curso,
+        url_list_profesores_asignados,
+        url_list_profesores,
+        url_list_cursos_no_iniciados,
+        url_assign_teacher,
+        url_delete_assignment,
+        url_update_assignment,
+        url_search_idioma
     }
 }
 
