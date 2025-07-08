@@ -4,7 +4,7 @@ import useLanguage from '../hooks/use-language';
 import useCourse from '../hooks/use-course';
 import Swal from 'sweetalert2';
 
-const AddCourseModal = ({ showModal, setShowModal, token, list_course }) => {
+const AddCourseModal = ({ showModal, setShowModal, token, list_course, setcourseID, setCourseSelected, setisSearching, setcourseSearched }) => {
 
     const [error, setError] = useState(null)
     const [isProcessing, setIsprocessing] = useState(false)
@@ -55,6 +55,10 @@ const AddCourseModal = ({ showModal, setShowModal, token, list_course }) => {
                 ClearForm()
                 setShowModal(false)
                 list_course(token)
+                setcourseID('')
+                setCourseSelected(null)
+                setisSearching(false)
+                setcourseSearched(null)
             }
 
         } catch (error) {

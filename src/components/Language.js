@@ -79,7 +79,10 @@ const Language = () => {
                     })
 
                     list_idiomas(token)
-
+                    setsearch(null)
+                    setisSearching(false)
+                    setLanguageSelected(null)
+                    setidiomaID('')
                 }
             } catch (error) {
 
@@ -162,14 +165,20 @@ const Language = () => {
                                             <td>
                                                 <div className="d-flex">
                                                     <button type="button" className='btn btn-warning' onClick={() => {
+                                                        setShowUpdateModal(true)
 
+                                                        const data = {
+                                                            idioma_id: search.idioma_id,
+                                                            nombre: search.nombre
+                                                        }
 
+                                                        setUpdateData(data)
                                                     }}><i className='bi bi-pencil-square'></i> Actualizar</button>
                                                     <button
                                                         type="button"
                                                         className="btn btn-danger"
                                                         style={{ marginLeft: '10px' }}
-                                                        onClick={() => { }}
+                                                        onClick={() => handleDelete(search.idioma_id)}
                                                     ><i className="bi bi-trash3"></i> Eliminar</button>
                                                 </div>
                                             </td>
@@ -235,8 +244,8 @@ const Language = () => {
                 }
             </div >
 
-            <AddLanguageModal showModal={showAddModal} setShowModal={setShowAddModal} list_idiomas={list_idiomas} token={token} />
-            <UpdateLanguageModal showModal={showUpdateModal} setShowModal={setShowUpdateModal} updateData={updateData} token={token} list_idiomas={list_idiomas} setUpdateData={setUpdateData} />
+            <AddLanguageModal showModal={showAddModal} setShowModal={setShowAddModal} list_idiomas={list_idiomas} token={token} setsearch={setsearch} setisSearching={setisSearching} setLanguageSelected={setLanguageSelected} setidiomaID={setidiomaID} />
+            <UpdateLanguageModal showModal={showUpdateModal} setShowModal={setShowUpdateModal} updateData={updateData} token={token} list_idiomas={list_idiomas} setUpdateData={setUpdateData} setsearch={setsearch} setisSearching={setisSearching} setLanguageSelected={setLanguageSelected} setidiomaID={setidiomaID} />
         </>
     )
 }

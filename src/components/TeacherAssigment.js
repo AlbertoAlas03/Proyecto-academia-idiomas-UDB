@@ -5,16 +5,30 @@ import { useAuth } from "../hooks/auth-context"
 import AssigmentTeacherModal from "./AssigmentTeacherModal"
 import Swal from "sweetalert2"
 import UpdateAssignmentModal from "./UpdateAssignmentModal"
+import Select from "react-select"
 
 const TeacherAssigment = () => {
 
     const [showAssigmentModal, setshowAssigmentModal] = useState(false)
     const [updateData, setupdateData] = useState([])
     const [showUpdateModal, setShowUpdateModal] = useState(false)
+    const [isSearching, setisSearching] = useState(false)
+    const [AssignmentSelected, setAssignmentSelected] = useState(null)
+    const [assignmentID, setassignmentID] = useState('')
 
-    const { list_teacher_assigment, teacherAssigment, delete_assingment } = useTeacherAssigment()
+    const { list_teacher_assigment, teacherAssigment, delete_assingment, search_assignment, searchData, setsearchData } = useTeacherAssigment()
 
     const { token } = useAuth()
+
+    const optionsTeacherAssignment = teacherAssigment.map((t) => ({
+        value: t.asignacion_id,
+        label: `${t.profesor.apellido} - ${t.curso.nombre} - ${t.curso.programa} - ${t.curso.modalidad}`
+    }))
+
+    const handleChangeAssignment = (assignmentSelected) => {
+        setAssignmentSelected(assignmentSelected)
+        setassignmentID(assignmentSelected ? assignmentSelected.value : '')
+    }
 
     const handledelete = async (asignacion_id) => {
 
@@ -47,6 +61,10 @@ const TeacherAssigment = () => {
                         allowOutsideClick: false
                     })
                     list_teacher_assigment(token)
+                    setassignmentID('')
+                    setisSearching(false)
+                    setAssignmentSelected(null)
+                    setsearchData(null)
                 }
 
             } catch (error) {
@@ -77,6 +95,31 @@ const TeacherAssigment = () => {
         })
     }
 
+    const handleReset = () => {
+        setAssignmentSelected(null)
+        setisSearching(false)
+        setassignmentID('')
+        setsearchData(null)
+    }
+
+    const handleSearch = async () => {
+        try {
+
+            await search_assignment(token, assignmentID)
+            setisSearching(true)
+
+        } catch (error) {
+
+            await Swal.fire({
+                title: error.message,
+                icon: "error",
+                draggable: false,
+                allowEscapeKey: false,
+                allowOutsideClick: false
+            })
+        }
+    }
+
     useEffect(() => {
         list_teacher_assigment(token)
     }, [])
@@ -86,12 +129,37 @@ const TeacherAssigment = () => {
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 className="h2"><i className="bi bi-person-video3"></i> Asignación de profesores</h1>
             </div>
-            <div className="row g-4 mb-3">
-                <div className="col col-lg-2">
+            <div className="row g-4 mb-3 align-items-center">
+                <div className="col-auto">
                     <button type="button" className="btn btn-success" onClick={() => setshowAssigmentModal(true)}><i className="bi bi-plus"></i> Nueva asignación</button>
                 </div>
+                <div className="col ms-auto">
+                    <div className="d-flex" style={{ maxWidth: '400px', marginLeft: 'auto' }}>
+                        <Select
+                            isDisabled={isSearching}
+                            className="w-100"
+                            options={optionsTeacherAssignment}
+                            value={AssignmentSelected}
+                            onChange={handleChangeAssignment}
+                            placeholder="Buscar asignación..."
+                            isClearable
+                            noOptionsMessage={() => 'No hay coincidencias'}
+                        />
+                        <button type="button" className={isSearching ? 'btn btn-success' : 'btn btn-primary'} style={{ marginLeft: '5px' }}
+                            onClick={() => {
+                                if (isSearching) {
+                                    handleReset()
+                                } else {
+                                    handleSearch()
+                                }
+
+                            }}>
+                            <i className={isSearching ? 'bi bi-arrow-repeat' : 'bi bi-search'}></i>
+                        </button>
+                    </div>
+                </div>
                 {
-                    teacherAssigment.length > 0 ? (
+                    searchData ? (
                         <div className="table-responsive">
                             <table className="table table-striped table-hover">
                                 <thead>
@@ -112,72 +180,153 @@ const TeacherAssigment = () => {
                                 </thead>
                                 <tbody>
                                     {
-                                        teacherAssigment.map((Teacher) => (
-                                            <tr key={Teacher.asignacion_id}>
-                                                <th scope="row">{Teacher.asignacion_id}</th>
-                                                <td>{Teacher.profesor.nombre + ' ' + Teacher.profesor.apellido}</td>
-                                                <td>{Teacher.profesor.email}</td>
-                                                <td>{Teacher.curso.nombre}</td>
-                                                <td>{Teacher.curso.idioma.nombre}</td>
-                                                <td>{Teacher.curso.programa}</td>
-                                                <td>{Teacher.curso.modalidad}</td>
-                                                <td>{Teacher.curso.horario}</td>
-                                                <td className="text-center">{Teacher.curso.total_inscripciones}</td>
-                                                <td className="text-center">
-                                                    <span
-                                                        className={Teacher.curso.estado === 'activo' ? 'badge text-bg-success' : Teacher.curso.estado === 'finalizado' ? 'badge text-bg-danger' : 'badge text-bg-warning'}
-                                                    >
-                                                        {Teacher.curso.estado}
-                                                    </span>
-                                                </td>
-                                                <td>{new Date(Teacher.fecha_asignacion).toISOString().split('T')[0]}</td>
-                                                <td>
+                                        <tr key={searchData.asignacion_id}>
+                                            <th scope="row">{searchData.asignacion_id}</th>
+                                            <td>{searchData.profesor.nombre + ' ' + searchData.profesor.apellido}</td>
+                                            <td>{searchData.profesor.email}</td>
+                                            <td>{searchData.curso.nombre}</td>
+                                            <td>{searchData.curso.idioma.nombre}</td>
+                                            <td>{searchData.curso.programa}</td>
+                                            <td>{searchData.curso.modalidad}</td>
+                                            <td>{searchData.curso.horario}</td>
+                                            <td className="text-center">{searchData.curso.total_inscripciones}</td>
+                                            <td className="text-center">
+                                                <span
+                                                    className={searchData.curso.estado === 'activo' ? 'badge text-bg-success' : searchData.curso.estado === 'finalizado' ? 'badge text-bg-danger' : 'badge text-bg-warning'}
+                                                >
+                                                    {searchData.curso.estado}
+                                                </span>
+                                            </td>
+                                            <td>{searchData ? new Date(searchData.fecha_asignacion).toISOString().split('T')[0] : 'Fecha no disponible'}</td>
+                                            <td>
 
-                                                    <div className="d-flex">
-                                                        <button type="button" className='btn btn-warning' onClick={() => {
-                                                            if (Teacher.curso.estado === 'activo' || Teacher.curso.estado === 'finalizado') {
-                                                                showModalUpdateWarning()
-                                                            } else {
+                                                <div className="d-flex">
+                                                    <button type="button" className='btn btn-warning' onClick={() => {
+                                                        if (searchData.curso.estado === 'activo' || searchData.curso.estado === 'finalizado') {
+                                                            showModalUpdateWarning()
+                                                        } else {
 
-                                                                const updateData = {
-                                                                    asignacion_id: Teacher.asignacion_id,
-                                                                    curso_id: Teacher.curso_id,
-                                                                    profesor_id: Teacher.profesor_id
-                                                                }
-
-                                                                setupdateData(updateData)
-                                                                setShowUpdateModal(true)
+                                                            const updateData = {
+                                                                asignacion_id: searchData.asignacion_id,
+                                                                curso_id: searchData.curso_id,
+                                                                profesor_id: searchData.profesor_id
                                                             }
-                                                        }}><i className="bi bi-pencil-square"></i> Actualizar</button>
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-danger"
-                                                            style={{ marginLeft: '10px' }}
-                                                            onClick={() => {
-                                                                if (Teacher.curso.estado === 'activo') {
-                                                                    showModalDeleteWarning()
-                                                                } else {
-                                                                    handledelete(Teacher.asignacion_id)
-                                                                }
-                                                            }}
-                                                        ><i className="bi bi-trash3"></i> Eliminar</button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))
+
+                                                            setupdateData(updateData)
+                                                            setShowUpdateModal(true)
+                                                        }
+                                                    }}><i className="bi bi-pencil-square"></i> Actualizar</button>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-danger"
+                                                        style={{ marginLeft: '10px' }}
+                                                        onClick={() => {
+                                                            if (searchData.curso.estado === 'activo') {
+                                                                showModalDeleteWarning()
+                                                            } else {
+                                                                handledelete(searchData.asignacion_id)
+                                                            }
+                                                        }}
+                                                    ><i className="bi bi-trash3"></i> Eliminar</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+
                                     }
 
                                 </tbody>
                             </table>
                         </div>
                     ) : (
-                        <NoData />
+                        teacherAssigment.length > 0 ? (
+                            <div className="table-responsive">
+                                <table className="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Profesor</th>
+                                            <th scope="col">Correo</th>
+                                            <th scope="col">Curso</th>
+                                            <th scope="col">Idioma</th>
+                                            <th scope="col">Programa</th>
+                                            <th scope="col">Modalidad</th>
+                                            <th scope="col">Horario</th>
+                                            <th scope="col">Inscritos</th>
+                                            <th scope="col">Estado</th>
+                                            <th scope="col">Fecha de asignación</th>
+                                            <th scope="col">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            teacherAssigment.map((Teacher) => (
+                                                <tr key={Teacher.asignacion_id}>
+                                                    <th scope="row">{Teacher.asignacion_id}</th>
+                                                    <td>{Teacher.profesor.nombre + ' ' + Teacher.profesor.apellido}</td>
+                                                    <td>{Teacher.profesor.email}</td>
+                                                    <td>{Teacher.curso.nombre}</td>
+                                                    <td>{Teacher.curso.idioma.nombre}</td>
+                                                    <td>{Teacher.curso.programa}</td>
+                                                    <td>{Teacher.curso.modalidad}</td>
+                                                    <td>{Teacher.curso.horario}</td>
+                                                    <td className="text-center">{Teacher.curso.total_inscripciones}</td>
+                                                    <td className="text-center">
+                                                        <span
+                                                            className={Teacher.curso.estado === 'activo' ? 'badge text-bg-success' : Teacher.curso.estado === 'finalizado' ? 'badge text-bg-danger' : 'badge text-bg-warning'}
+                                                        >
+                                                            {Teacher.curso.estado}
+                                                        </span>
+                                                    </td>
+                                                    <td>{new Date(Teacher.fecha_asignacion).toISOString().split('T')[0]}</td>
+                                                    <td>
+
+                                                        <div className="d-flex">
+                                                            <button type="button" className='btn btn-warning' onClick={() => {
+                                                                if (Teacher.curso.estado === 'activo' || Teacher.curso.estado === 'finalizado') {
+                                                                    showModalUpdateWarning()
+                                                                } else {
+
+                                                                    const updateData = {
+                                                                        asignacion_id: Teacher.asignacion_id,
+                                                                        curso_id: Teacher.curso_id,
+                                                                        profesor_id: Teacher.profesor_id
+                                                                    }
+
+                                                                    setupdateData(updateData)
+                                                                    setShowUpdateModal(true)
+                                                                }
+                                                            }}><i className="bi bi-pencil-square"></i> Actualizar</button>
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn-danger"
+                                                                style={{ marginLeft: '10px' }}
+                                                                onClick={() => {
+                                                                    if (Teacher.curso.estado === 'activo') {
+                                                                        showModalDeleteWarning()
+                                                                    } else {
+                                                                        handledelete(Teacher.asignacion_id)
+                                                                    }
+                                                                }}
+                                                            ><i className="bi bi-trash3"></i> Eliminar</button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        }
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <NoData />
+                        )
                     )
+
                 }
             </div >
 
-            <AssigmentTeacherModal showModal={showAssigmentModal} setShowModal={setshowAssigmentModal} token={token} list_teacher_assigment={list_teacher_assigment} />
-            <UpdateAssignmentModal showModal={showUpdateModal} setShowModal={setShowUpdateModal} token={token} updateData={updateData} list_teacher_assigment={list_teacher_assigment} />
+            <AssigmentTeacherModal showModal={showAssigmentModal} setShowModal={setshowAssigmentModal} token={token} list_teacher_assigment={list_teacher_assigment} setisSearching={setisSearching} setassignmentID={setassignmentID} setAssignmentSelected={setAssignmentSelected} setsearchData={setsearchData} />
+            <UpdateAssignmentModal showModal={showUpdateModal} setShowModal={setShowUpdateModal} token={token} updateData={updateData} list_teacher_assigment={list_teacher_assigment} setisSearching={setisSearching} setassignmentID={setassignmentID} setAssignmentSelected={setAssignmentSelected} setsearchData={setsearchData} />
         </>
     )
 

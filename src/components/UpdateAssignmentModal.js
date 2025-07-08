@@ -5,7 +5,17 @@ import useCourse from '../hooks/use-course';
 import useTeacherAssigment from '../hooks/use-teacher-assigment';
 import Swal from 'sweetalert2';
 
-const UpdateAssignmentModal = ({ showModal, setShowModal, token, updateData, list_teacher_assigment }) => {
+const UpdateAssignmentModal = ({
+    showModal,
+    setShowModal,
+    token,
+    updateData,
+    list_teacher_assigment,
+    setisSearching,
+    setassignmentID,
+    setAssignmentSelected,
+    setsearchData
+}) => {
 
     const [error, setError] = useState(null)
     const [isProcessing, setisProcessing] = useState(false)
@@ -13,7 +23,7 @@ const UpdateAssignmentModal = ({ showModal, setShowModal, token, updateData, lis
     const [courseId, setCourseId] = useState('')
     const [selectedTeacher, setSelectedTeacher] = useState(null)
     const [teacherId, setTeacherId] = useState('')
-    const [assignmentID, setassignmentID] = useState('')
+    const [assignmentID, setAssignmentID] = useState('')
 
     const { list_cursos_no_iniciados, course_not_started } = useCourse()
 
@@ -46,6 +56,10 @@ const UpdateAssignmentModal = ({ showModal, setShowModal, token, updateData, lis
                 setShowModal(false)
                 clearForm()
                 list_teacher_assigment(token)
+                setisSearching(false)
+                setAssignmentSelected(null)
+                setassignmentID('')
+                setsearchData(null)
             }
 
         } catch (error) {
@@ -83,7 +97,7 @@ const UpdateAssignmentModal = ({ showModal, setShowModal, token, updateData, lis
         setSelectedTeacher(null)
         setCourseId('')
         setTeacherId('')
-        setassignmentID('')
+        setAssignmentID('')
     }
 
     useEffect(() => {
@@ -101,7 +115,7 @@ const UpdateAssignmentModal = ({ showModal, setShowModal, token, updateData, lis
             setSelectedCourse(FoundCourse)
             setCourseId(updateData.curso_id)
 
-            setassignmentID(updateData.asignacion_id)
+            setAssignmentID(updateData.asignacion_id)
         }
     }, [updateData, teacher, course_not_started])
 

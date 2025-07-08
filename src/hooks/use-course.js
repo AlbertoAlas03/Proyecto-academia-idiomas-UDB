@@ -8,8 +8,9 @@ const useCourse = () => {
 
     const [course, setCourse] = useState([])
     const [course_not_started, setcourse_not_started] = useState([])
+    const [courseSearched, setcourseSearched] = useState(null)
 
-    const { url_list_cursos, url_add_curso, url_delete_curso, url_update_curso, url_list_cursos_no_iniciados } = Url()
+    const { url_list_cursos, url_add_curso, url_delete_curso, url_update_curso, url_list_cursos_no_iniciados, url_search_curso } = Url()
 
     const { refresh } = useRefreshToken()
 
@@ -357,7 +358,72 @@ const useCourse = () => {
         setcourse_not_started(data.data)
     }
 
-    return { list_course, course, add_course, delete_course, update_course, list_cursos_no_iniciados, course_not_started }
+    const search_curso = async (token, curso_id) => {
+
+        const response = await fetch(url_search_curso, {
+            method: 'POST',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ curso_id })
+        })
+
+        if (!response.ok) {
+
+            const ErrorData = await response.json()
+
+            if (ErrorData.message_about_token) {
+
+                const modal_validacion = window.confirm('Tu sesión a expirado, ¿Desea renovarla?')
+
+                if (modal_validacion) {
+
+                    const response_token = await refresh(setToken)
+
+                    const token_nuevo = response_token.token_nuevo
+
+                    if (token_nuevo) {
+
+                        return await search_curso(token_nuevo, curso_id)
+
+                    } else {
+                        return
+                    }
+
+                } else {
+                    try {
+
+                        const response_logout = await logout()
+
+                        if (response_logout) {
+                            alert(response_logout.message)
+                            return
+                        }
+
+                    } catch (error) {
+
+                        console.log('Error al cerrar sesion: ', error.message)
+                        alert(error.message)
+                        return
+                    }
+
+                }
+
+            } else {
+                throw new Error(ErrorData.message || 'Error en el servidor')
+            }
+        }
+
+        const data = await response.json()
+
+        setcourseSearched(data.data)
+
+        return data
+    }
+
+    return { list_course, course, add_course, delete_course, update_course, list_cursos_no_iniciados, course_not_started, search_curso, courseSearched, setcourseSearched }
 }
 
 export default useCourse

@@ -3,7 +3,7 @@ import useLanguage from "../hooks/use-language"
 import { Button, Modal, Form } from 'react-bootstrap';
 import Swal from "sweetalert2"
 
-const AddLanguageModal = ({ showModal, setShowModal, list_idiomas, token }) => {
+const AddLanguageModal = ({ showModal, setShowModal, list_idiomas, token, setsearch, setisSearching, setLanguageSelected, setidiomaID }) => {
 
     const [language, setLanguage] = useState('')
     const [error, setError] = useState(null)
@@ -30,8 +30,12 @@ const AddLanguageModal = ({ showModal, setShowModal, list_idiomas, token }) => {
                 })
                 setIsProcessing(false)
                 setShowModal(false)
-                setLanguage('')
+                clearAll()
                 list_idiomas(token)
+                setsearch(null)
+                setisSearching(false)
+                setLanguageSelected(null)
+                setidiomaID('')
             }
         } catch (error) {
 
@@ -42,13 +46,17 @@ const AddLanguageModal = ({ showModal, setShowModal, list_idiomas, token }) => {
 
     }
 
+    const clearAll = () => {
+        setLanguage('')
+    }
+
     return (
         <Modal
             show={showModal}
             onHide={() => {
                 setShowModal(false)
                 setError(null)
-                setLanguage('')
+                clearAll()
             }}
             backdrop="static"
             keyboard={false}
@@ -97,7 +105,7 @@ const AddLanguageModal = ({ showModal, setShowModal, list_idiomas, token }) => {
                             <Button variant="danger" onClick={() => {
                                 setShowModal(false)
                                 setError(null)
-                                setLanguage('')
+                                clearAll()
                             }}>
                                 <i className="bi bi-x"></i> Cancelar
                             </Button>

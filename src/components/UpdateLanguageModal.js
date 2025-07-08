@@ -3,7 +3,7 @@ import { Button, Modal, Form } from 'react-bootstrap';
 import useLanguage from '../hooks/use-language';
 import Swal from 'sweetalert2';
 
-const UpdateLanguageModal = ({ showModal, setShowModal, updateData, token, list_idiomas, setUpdateData }) => {
+const UpdateLanguageModal = ({ showModal, setShowModal, updateData, token, list_idiomas, setUpdateData, setsearch, setisSearching, setLanguageSelected, setidiomaID }) => {
 
     const [error, setError] = useState(null)
     const [isProcessing, setisProcessing] = useState(false)
@@ -38,7 +38,10 @@ const UpdateLanguageModal = ({ showModal, setShowModal, updateData, token, list_
                 clearForm()
                 setShowModal(false)
                 list_idiomas(token)
-                setUpdateData([])
+                setsearch(null)
+                setisSearching(false)
+                setLanguageSelected(null)
+                setidiomaID('')
             }
         } catch (error) {
             setError(error.message || 'Error en el servidor')
@@ -49,6 +52,7 @@ const UpdateLanguageModal = ({ showModal, setShowModal, updateData, token, list_
     const clearForm = () => {
         setName('')
         setIdioma_id('')
+        setUpdateData([])
     }
 
     useEffect(() => {
@@ -65,7 +69,6 @@ const UpdateLanguageModal = ({ showModal, setShowModal, updateData, token, list_
                 clearForm()
                 setShowModal(false)
                 setError(null)
-                setUpdateData([])
             }}
             backdrop="static"
             keyboard={false}
@@ -115,7 +118,6 @@ const UpdateLanguageModal = ({ showModal, setShowModal, updateData, token, list_
                                 clearForm()
                                 setShowModal(false)
                                 setError(null)
-                                setUpdateData([])
                             }}>
                                 <i className="bi bi-x"></i> Cancelar
                             </Button>

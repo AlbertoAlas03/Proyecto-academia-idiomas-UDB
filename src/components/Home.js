@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/auth-context';
 import Swal from 'sweetalert2';
 import TeacherAssigment from './TeacherAssigment';
+import Configuration from './Configuration';
 
 const Home = () => {
 
@@ -115,6 +116,10 @@ const Home = () => {
                                 <i className="bi bi-people"></i>
                                 Gestión usuarios
                             </Tab>
+                            <Tab type="button" className="nav-link d-flex align-items-center gap-2 text-white" style={{ fontSize: '20px' }}>
+                                <i className="bi bi-gear"></i>
+                                Configuración
+                            </Tab>
                         </TabList>
                         <hr />
                         <button
@@ -145,6 +150,9 @@ const Home = () => {
                             </TabPanel>
                             <TabPanel>
                                 <User />
+                            </TabPanel>
+                            <TabPanel>
+                                <Configuration />
                             </TabPanel>
                         </div>
                     </div>

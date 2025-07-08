@@ -8,8 +8,16 @@ const useTeacherAssigment = () => {
 
     const [teacherAssigment, setTeacherAssigment] = useState([])
     const [teacher, setTeacher] = useState([])
+    const [searchData, setsearchData] = useState(null)
 
-    const { url_list_profesores_asignados, url_list_profesores, url_assign_teacher, url_delete_assignment, url_update_assignment } = Url()
+    const {
+        url_list_profesores_asignados,
+        url_list_profesores,
+        url_assign_teacher,
+        url_delete_assignment,
+        url_update_assignment,
+        url_search_asignacion
+    } = Url()
 
     const { refresh } = useRefreshToken()
 
@@ -342,7 +350,83 @@ const useTeacherAssigment = () => {
 
     }
 
-    return { list_teacher_assigment, teacherAssigment, list_teachers, teacher, assign_teacher, delete_assingment, update_assignment }
+    const search_assignment = async (token, asignacion_id) => {
+
+        const response = await fetch(url_search_asignacion, {
+            method: 'POST',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ asignacion_id })
+        })
+
+        if (!response.ok) {
+
+            const ErrorData = await response.json()
+
+            if (ErrorData.message_about_token) {
+
+                const modal_validacion = window.confirm('Tu sesión a expirado, ¿Desea renovarla?')
+
+                if (modal_validacion) {
+
+                    const response_token = await refresh(setToken)
+
+                    const token_nuevo = response_token.token_nuevo
+
+                    if (token_nuevo) {
+
+                        return await search_assignment(token_nuevo, asignacion_id)
+
+                    } else {
+                        return
+                    }
+
+                } else {
+                    try {
+
+                        const response_logout = await logout()
+
+                        if (response_logout) {
+                            alert(response_logout.message)
+                            return
+                        }
+
+                    } catch (error) {
+
+                        console.log('Error al cerrar sesion: ', error.message)
+                        alert(error.message)
+                        return
+                    }
+
+                }
+
+            } else {
+                throw new Error(ErrorData.message || 'Error en el servidor')
+            }
+        }
+
+        const data = await response.json()
+
+        setsearchData(data.data)
+
+        return data
+    }
+
+    return {
+        list_teacher_assigment,
+        teacherAssigment,
+        list_teachers,
+        teacher,
+        assign_teacher,
+        delete_assingment,
+        update_assignment,
+        search_assignment,
+        searchData,
+        setsearchData
+    }
 }
 
 export default useTeacherAssigment

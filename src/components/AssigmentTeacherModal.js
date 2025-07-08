@@ -6,7 +6,16 @@ import Swal from 'sweetalert2';
 import Select from 'react-select';
 
 
-const AssigmentTeacherModal = ({ showModal, setShowModal, token, list_teacher_assigment }) => {
+const AssigmentTeacherModal = ({
+    showModal,
+    setShowModal,
+    token,
+    list_teacher_assigment,
+    setisSearching,
+    setassignmentID,
+    setAssignmentSelected,
+    setsearchData
+}) => {
 
     const [error, setError] = useState(null)
     const [isProcessing, setisProcessing] = useState(false)
@@ -45,6 +54,10 @@ const AssigmentTeacherModal = ({ showModal, setShowModal, token, list_teacher_as
                 setShowModal(false)
                 clearDroptowns()
                 list_teacher_assigment(token)
+                setisSearching(false)
+                setAssignmentSelected(null)
+                setassignmentID('')
+                setsearchData(null)
             }
 
         } catch (error) {

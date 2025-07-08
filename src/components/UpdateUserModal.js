@@ -3,7 +3,17 @@ import { Button, Modal, Form } from 'react-bootstrap';
 import useUser from "../hooks/use-user";
 import Swal from "sweetalert2";
 
-const UpdateUserModal = ({ showModal, setShowModal, DataUpdate, token, list_user }) => {
+const UpdateUserModal = ({
+    showModal,
+    setShowModal,
+    DataUpdate,
+    token,
+    list_user,
+    setUserSelected,
+    setuserID,
+    setisSearching,
+    setsearchData
+}) => {
 
     const [name, setName] = useState('')
     const [lastName, setLastName] = useState('')
@@ -46,6 +56,10 @@ const UpdateUserModal = ({ showModal, setShowModal, DataUpdate, token, list_user
                 clearForm()
                 setShowModal(false)
                 list_user(token)
+                setUserSelected(null)
+                setuserID('')
+                setisSearching(false)
+                setsearchData(null)
             }
 
         } catch (error) {

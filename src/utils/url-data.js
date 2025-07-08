@@ -27,6 +27,9 @@ const Url = () => {
     const url_delete_assignment = data + 'delete_profesor_curso'
     const url_update_assignment = data + 'update_profesor_curso'
     const url_search_idioma = data + 'search_idioma'
+    const url_search_curso = data + 'search_curso'
+    const url_search_asignacion = data + 'search_asignacion'
+    const url_search_usuario = data + 'search_usuario'
 
     return {
         url_login,
@@ -53,7 +56,10 @@ const Url = () => {
         url_assign_teacher,
         url_delete_assignment,
         url_update_assignment,
-        url_search_idioma
+        url_search_idioma,
+        url_search_curso,
+        url_search_asignacion,
+        url_search_usuario
     }
 }
 

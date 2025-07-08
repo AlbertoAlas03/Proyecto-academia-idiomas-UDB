@@ -7,8 +7,9 @@ import useLogin from '../hooks/use-login'
 const useUser = () => {
 
     const [usuarios, setUsuarios] = useState([])
+    const [searchData, setsearchData] = useState(null)
 
-    const { url_list_user, url_add_user, url_enable_user, url_disable_user, url_update_user } = url()
+    const { url_list_user, url_add_user, url_enable_user, url_disable_user, url_update_user, url_search_usuario } = url()
     const { logout } = useLogin()
 
     const { refresh } = useRefreshToken()
@@ -340,7 +341,70 @@ const useUser = () => {
         return data
     }
 
-    return { list_user, usuarios, add_usuario, enable_user, disable_user, update_user }
+    const search_usuario = async (token, usuario_id) => {
+
+        const response = await fetch(url_search_usuario, {
+            method: 'POST',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ usuario_id })
+        })
+
+        if (!response.ok) {
+
+            const ErrorData = await response.json()
+
+            if (ErrorData.message_about_token) {
+
+                const modal_validacion = window.confirm('Tu sesión a expirado, ¿Desea renovarla?')
+
+                if (modal_validacion) {
+
+                    const response_token = await refresh(setToken)
+
+                    const token_nuevo = response_token.token_nuevo
+
+                    if (token_nuevo) {
+                        return await search_usuario(token_nuevo, usuario_id)
+                    } else {
+                        return
+                    }
+
+                } else {
+                    try {
+
+                        const response_logout = await logout()
+
+                        if (response_logout) {
+                            alert(response_logout.message)
+                            return
+                        }
+
+                    } catch (error) {
+
+                        console.log('Error al cerrar sesion: ', error.message)
+                        alert(error.message)
+                        return
+                    }
+
+                }
+
+            } else {
+                throw new Error(ErrorData.message || 'Error en el servidor')
+            }
+        }
+
+        const data = await response.json()
+
+        setsearchData(data.data)
+
+        return data
+    }
+
+    return { list_user, usuarios, add_usuario, enable_user, disable_user, update_user, search_usuario, searchData, setsearchData }
 }
 
 export default useUser
