@@ -17,7 +17,7 @@ const User = () => {
     const [userID, setuserID] = useState('')
 
     const { list_user, usuarios, enable_user, disable_user, search_usuario, searchData, setsearchData } = useUser()
-    const { token } = useAuth()
+    const { token, user } = useAuth()
 
     const optionsUser = usuarios.map((u) => ({
         value: u.usuario_id,
@@ -217,7 +217,7 @@ const User = () => {
                                             <td>
 
                                                 <div className="d-flex">
-                                                    <button type="button" className={searchData.activo ? 'btn btn-danger' : 'btn btn-success'} onClick={() => {
+                                                    <button disabled={user.usuario_id === searchData.usuario_id} type="button" className={searchData.activo ? 'btn btn-danger' : 'btn btn-success'} onClick={() => {
                                                         if (searchData.activo) {
                                                             Disable_user(searchData.usuario_id)
                                                         } else {
@@ -225,6 +225,7 @@ const User = () => {
                                                         }
                                                     }}><i className={searchData.activo ? 'bi bi-x-square' : 'bi bi-check2-square'}></i> {searchData.activo ? 'Inhabilitar' : 'Habilitar'}</button>
                                                     <button
+                                                        disabled={user.usuario_id === searchData.usuario_id}
                                                         type="button"
                                                         className="btn btn-warning"
                                                         style={{ marginLeft: '10px' }}
@@ -288,7 +289,7 @@ const User = () => {
                                                     <td>
 
                                                         <div className="d-flex">
-                                                            <button type="button" className={usuario.activo ? 'btn btn-danger' : 'btn btn-success'} onClick={() => {
+                                                            <button disabled={user.usuario_id === usuario.usuario_id} type="button" className={usuario.activo ? 'btn btn-danger' : 'btn btn-success'} onClick={() => {
                                                                 if (usuario.activo) {
                                                                     Disable_user(usuario.usuario_id)
                                                                 } else {
@@ -296,6 +297,7 @@ const User = () => {
                                                                 }
                                                             }}><i className={usuario.activo ? 'bi bi-x-square' : 'bi bi-check2-square'}></i> {usuario.activo ? 'Inhabilitar' : 'Habilitar'}</button>
                                                             <button
+                                                                disabled={user.usuario_id === usuario.usuario_id}
                                                                 type="button"
                                                                 className="btn btn-warning"
                                                                 style={{ marginLeft: '10px' }}

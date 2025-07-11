@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import usuario from "../assets/img/usuario.png"
+import logo from "../assets/img/logo.png"
 import useLogin from "../hooks/use-login";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/auth-context";
@@ -70,7 +70,7 @@ const Login = () => {
             <div className="card shadow-lg rounded-3 w-75" style={{ maxWidth: '500px' }}>
                 <div className="card-body">
                     <h2 className="text-center mb-4" style={{ fontSize: '2rem' }}>Iniciar Sesión</h2>
-                    <img src={usuario} alt="Usuario" className="img-fluid mx-auto d-block mb-4" style={{ width: '100px', height: '100px' }} />
+                    <img src={logo} alt="Usuario" className="img-fluid mx-auto d-block mb-4" style={{ width: '220px', height: '100px' }} />
                     {error && (
                         <div className="alert alert-danger d-flex align-items-center" role="alert">
                             <button className="me-2" style={{ background: 'transparent', border: 'none' }} onClick={() => setError(null)}>

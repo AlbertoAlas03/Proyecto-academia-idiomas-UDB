@@ -324,9 +324,18 @@ const TeacherAssigment = () => {
 
                 }
             </div >
+            {
+                showAssigmentModal && (
+                    <AssigmentTeacherModal showModal={showAssigmentModal} setShowModal={setshowAssigmentModal} token={token} list_teacher_assigment={list_teacher_assigment} setisSearching={setisSearching} setassignmentID={setassignmentID} setAssignmentSelected={setAssignmentSelected} setsearchData={setsearchData} />
+                )
+            }
+            {
+                showUpdateModal && (
+                    <UpdateAssignmentModal showModal={showUpdateModal} setShowModal={setShowUpdateModal} token={token} updateData={updateData} list_teacher_assigment={list_teacher_assigment} setisSearching={setisSearching} setassignmentID={setassignmentID} setAssignmentSelected={setAssignmentSelected} setsearchData={setsearchData} />
+                )
+            }
 
-            <AssigmentTeacherModal showModal={showAssigmentModal} setShowModal={setshowAssigmentModal} token={token} list_teacher_assigment={list_teacher_assigment} setisSearching={setisSearching} setassignmentID={setassignmentID} setAssignmentSelected={setAssignmentSelected} setsearchData={setsearchData} />
-            <UpdateAssignmentModal showModal={showUpdateModal} setShowModal={setShowUpdateModal} token={token} updateData={updateData} list_teacher_assigment={list_teacher_assigment} setisSearching={setisSearching} setassignmentID={setassignmentID} setAssignmentSelected={setAssignmentSelected} setsearchData={setsearchData} />
+
         </>
     )
 

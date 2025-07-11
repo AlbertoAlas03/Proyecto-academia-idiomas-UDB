@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
     const { get_session } = useSession()
 
     const [token, setToken] = useState(null);
-    const [user, setUser] = useState([])
+    const [user, setUser] = useState(null)
 
     const fetchData = async () => {
         try {

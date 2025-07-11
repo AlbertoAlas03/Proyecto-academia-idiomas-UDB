@@ -353,9 +353,19 @@ const Course = () => {
 
                 }
             </div >
+            {
+                showAddModal && (
+                    <AddCourseModal showModal={showAddModal} setShowModal={setShowAddModal} token={token} list_course={list_course} setcourseID={setcourseID} setCourseSelected={setCourseSelected} setisSearching={setisSearching} setcourseSearched={setcourseSearched} />
+                )
+            }
 
-            <AddCourseModal showModal={showAddModal} setShowModal={setShowAddModal} token={token} list_course={list_course} setcourseID={setcourseID} setCourseSelected={setCourseSelected} setisSearching={setisSearching} setcourseSearched={setcourseSearched} />
-            <UpdateCourseModal showModal={showUpdateModal} setShowModal={setShowUpdateModal} updateData={updateData} setUpdateData={setUpdateData} token={token} list_course={list_course} setcourseID={setcourseID} setCourseSelected={setCourseSelected} setisSearching={setisSearching} setcourseSearched={setcourseSearched} />
+            {
+                showUpdateModal && (
+                    <UpdateCourseModal showModal={showUpdateModal} setShowModal={setShowUpdateModal} updateData={updateData} setUpdateData={setUpdateData} token={token} list_course={list_course} setcourseID={setcourseID} setCourseSelected={setCourseSelected} setisSearching={setisSearching} setcourseSearched={setcourseSearched} />
+                )
+            }
+
+
         </>
     )
 }

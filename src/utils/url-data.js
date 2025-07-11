@@ -30,6 +30,9 @@ const Url = () => {
     const url_search_curso = data + 'search_curso'
     const url_search_asignacion = data + 'search_asignacion'
     const url_search_usuario = data + 'search_usuario'
+    const url_send_code = data + 'send_email'
+    const url_change_password = data + 'change_password'
+    const url_cancel_change = data + 'cancel_change'
 
     return {
         url_login,
@@ -59,7 +62,10 @@ const Url = () => {
         url_search_idioma,
         url_search_curso,
         url_search_asignacion,
-        url_search_usuario
+        url_search_usuario,
+        url_send_code,
+        url_change_password,
+        url_cancel_change
     }
 }
 

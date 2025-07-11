@@ -56,7 +56,7 @@ const useLogin = () => {
         const data = await response.json()
 
         setToken(null)
-        setUser([])
+        setUser(null)
 
         return data
     }
