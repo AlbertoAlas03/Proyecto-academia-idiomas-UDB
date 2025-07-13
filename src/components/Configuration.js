@@ -3,11 +3,14 @@ import { useAuth } from '../hooks/auth-context'
 import useChangePassword from "../hooks/use-change-password";
 import Swal from "sweetalert2";
 import ChangePasswordModal from "./ChangePasswordModal";
+import UpdateDataUserModal from "./UpdateDataUserModal";
 
 const Configuration = () => {
 
     const [isProcessing, setisProcessing] = useState(false)
     const [showModal, setshowModal] = useState(false)
+    const [showUpdateModal, setshowUpdateModal] = useState(false)
+    const [data, setData] = useState(null)
 
     const { user, token } = useAuth()
 
@@ -62,6 +65,18 @@ const Configuration = () => {
 
     }
 
+    const handleUpdateData = () => {
+        const data = {
+            usuario_id: user.usuario_id,
+            nombre: user.nombre,
+            apellido: user.apellido,
+            email: user.email
+        }
+
+        setData(data)
+        setshowUpdateModal(true)
+    }
+
     return (
         <>
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -79,8 +94,10 @@ const Configuration = () => {
                             <p><strong>Email:</strong> {`${user ? user.email : ''}`}</p>
                             <p><strong>Rol:</strong> {`${user ? user.rol : ''}`}</p>
                             <p><strong>Fecha de registro:</strong> {`${user ? new Date(user.fecha_registro).toISOString().split('T')[0] : ''}`}</p>
-                            <button disabled={isProcessing} className="btn btn-primary"><i className="bi bi-pencil-square"></i> Actualizar datos</button>
+                            <button disabled={isProcessing} className="btn btn-primary" onClick={() => handleUpdateData()}
+                            ><i className="bi bi-pencil-square"></i> Actualizar datos</button>
                             <hr className="my-3" />
+
                             <p>Puedes cambiar tu contraseña dando click aquí, se te enviará un código a tu correo eléctronico.</p>
 
                             <button disabled={isProcessing} type="submit" className="btn btn-warning" onClick={() => handleSendCode()}>
@@ -102,7 +119,14 @@ const Configuration = () => {
                     </div>
                 </div>
             </div>
-            <ChangePasswordModal showModal={showModal} setShowModal={setshowModal} user={user} token={token} />
+            {
+                showModal && (
+                    <ChangePasswordModal showModal={showModal} setShowModal={setshowModal} user={user} token={token} />
+                )
+            }
+
+            <UpdateDataUserModal showModal={showUpdateModal} updateData={data} setShowModal={setshowUpdateModal} token={token} />
+
         </>
     );
 };

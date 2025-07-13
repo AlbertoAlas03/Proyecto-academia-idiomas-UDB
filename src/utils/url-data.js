@@ -33,6 +33,7 @@ const Url = () => {
     const url_send_code = data + 'send_email'
     const url_change_password = data + 'change_password'
     const url_cancel_change = data + 'cancel_change'
+    const url_update_account = data + 'update_account'
 
     return {
         url_login,
@@ -65,7 +66,8 @@ const Url = () => {
         url_search_usuario,
         url_send_code,
         url_change_password,
-        url_cancel_change
+        url_cancel_change,
+        url_update_account
     }
 }
 
