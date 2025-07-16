@@ -1,0 +1,5 @@
+export const url_login = process.env.REACT_APP_BACKEND_URL + 'login'
+export const url_session = process.env.REACT_APP_BACKEND_URL + 'session'
+export const url_list_cursos = process.env.REACT_APP_BACKEND_URL + 'list_profesor_curso'
+export const url_refresh_token = process.env.REACT_APP_BACKEND_URL + 'refresh_token'
+export const url_logout = process.env.REACT_APP_BACKEND_URL + 'logout'
