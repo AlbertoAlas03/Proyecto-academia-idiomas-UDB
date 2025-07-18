@@ -4,7 +4,7 @@ import Footer from "../components/Footer"
 import { useEffect, useState } from "react"
 import useLogin from "../hooks/use-login"
 import { useNavigate } from "react-router-dom"
-import { useAuth } from "../hooks/auth-context"
+import { useAuth } from "../hooks/contexts/auth-context"
 
 const Login = () => {
 

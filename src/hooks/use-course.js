@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { url_list_cursos } from '../utils/request-url'
-import { useAuth } from './auth-context'
+import { useAuth } from './contexts/auth-context'
 import useRefreshToken from './use-refreshToken'
 import useLogin from './use-login'
-import { CallCourses } from './course-context'
+import { CallCourses } from './contexts/course-context'
 
 const useCourse = () => {
 
@@ -16,8 +16,11 @@ const useCourse = () => {
     const { logout } = useLogin()
 
     const [cursos, setcursos] = useState([])
+    const [loading, setLoading] = useState(true)
 
     const list_course = async (token) => {
+
+        setLoading(true)
 
         const response = await fetch(url_list_cursos, {
             method: 'GET',
@@ -76,9 +79,10 @@ const useCourse = () => {
 
         setcursos(data.data)
         setCourses(data.data)
+        setLoading(false)
     }
 
-    return { list_course, cursos }
+    return { list_course, cursos, loading }
 }
 
 export default useCourse

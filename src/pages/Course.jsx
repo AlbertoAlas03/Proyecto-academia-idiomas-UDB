@@ -1,21 +1,40 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import useCourse from "../hooks/use-course"
-import { useAuth } from "../hooks/auth-context"
-import { Button, Card, Container, Badge, Image } from "react-bootstrap"
+import { useAuth } from "../hooks/contexts/auth-context"
+import { Button, Card, Container, Badge, Image, Spinner } from "react-bootstrap"
 import english_img from '../assets/img/english.jpg'
 import france_img from '../assets/img/france.jpg'
+import { Link } from "react-router-dom"
+import { CallCourses } from "../hooks/contexts/course-context"
+import curso_img from '../assets/img/curso.png'
 
 const Course = () => {
 
-    const { list_course, cursos } = useCourse()
+    const { list_course, cursos, loading } = useCourse()
 
     const { token } = useAuth()
+
+    const { setNombre, setPrograma, setModalidad } = CallCourses()
 
     useEffect(() => {
         if (token) {
             list_course(token)
         }
     }, [])
+
+    if (loading) {
+        return (
+            <Container
+                fluid
+                className="d-flex flex-column justify-content-center align-items-center"
+                style={{ height: '100vh', background: '#f5f7fa' }}
+            >
+                <Spinner animation="border" variant="primary" role="status" style={{ width: '4rem', height: '4rem' }} />
+
+                <p className="mt-4 fs-5 text-secondary">Cargando tus cursos, por favor espera...</p>
+            </Container>
+        )
+    }
 
     return (
         <>
@@ -55,7 +74,11 @@ const Course = () => {
                                                     </Badge>
 
                                                     <div className="d-flex justify-content-end">
-                                                        <Button variant="primary" className="rounded-pill">
+                                                        <Button variant="primary" className="rounded-pill" as={Link} to={`/home/course/${Curso.curso_id}`} onClick={() => {
+                                                            setNombre(Curso.curso.nombre)
+                                                            setPrograma(Curso.curso.programa)
+                                                            setModalidad(Curso.curso.modalidad)
+                                                        }}>
                                                             Ir al curso <i className="bi bi-arrow-right"></i>
                                                         </Button>
                                                     </div>
@@ -68,7 +91,11 @@ const Course = () => {
                         </Container>
                     </Container>
                 ) : (
-                    <div>No hay XD</div>
+                    <Container className="d-flex flex-column justify-content-center align-items-center" style={{ minHeight: '70vh' }}>
+                        <Image src={curso_img} className="display-1 text-secondary mb-4" style={{ height: '200px', width: '200px' }} />
+                        <h3 className="text-muted mb-3">¡Vaya! No tienes cursos asignados todavía.</h3>
+                        <p className="text-center text-secondary mb-4">Cuando se te asignen cursos, aparecerán aquí.</p>
+                    </Container>
                 )
             }
         </>

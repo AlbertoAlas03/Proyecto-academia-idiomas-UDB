@@ -1,5 +1,5 @@
 import { url_login, url_logout } from '../utils/request-url'
-import { useAuth } from './auth-context'
+import { useAuth } from './contexts/auth-context'
 
 const useLogin = () => {
 
@@ -48,8 +48,8 @@ const useLogin = () => {
         })
 
         if (!response.ok) {
-            const ErrorData = await response.json()
-            throw new Error(ErrorData.message || 'Error en el servidor')
+            setToken(null)
+            setUser(null)
         }
 
         const data = await response.json()

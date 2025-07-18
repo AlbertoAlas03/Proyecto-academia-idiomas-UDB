@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { Outlet } from "react-router-dom"
 import NavBar from "../components/Navbar"
 import OffCanvas from "../components/OffCanvas"
-import { useAuth } from "../hooks/auth-context"
+import { useAuth } from "../hooks/contexts/auth-context"
 import { useNavigate } from "react-router-dom"
 
 const Home = () => {
