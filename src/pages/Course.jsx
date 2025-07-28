@@ -74,7 +74,7 @@ const Course = () => {
                                                     </Badge>
 
                                                     <div className="d-flex justify-content-end">
-                                                        <Button variant="primary" className="rounded-pill" as={Link} to={`/home/course/${Curso.curso_id}`} onClick={() => {
+                                                        <Button variant="primary" className="rounded-pill" as={Link} to={`/home/course/students/${Curso.curso_id}`} onClick={() => {
                                                             setNombre(Curso.curso.nombre)
                                                             setPrograma(Curso.curso.programa)
                                                             setModalidad(Curso.curso.modalidad)

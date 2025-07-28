@@ -36,11 +36,12 @@ const Student = () => {
     return (
         <Container className="album py-4">
             <Container className="container">
+                <h3 className="h3"><i className="bi bi-people"></i> Gestión de estudiantes - {nombre} - {programa} - {modalidad}</h3>
+                <hr />
                 {
                     student.length > 0 ? (
                         <>
-                            <h3 className="h3"><i className="bi bi-people"></i> Gestión de estudiantes - {nombre} - {programa} - {modalidad}</h3>
-                            <hr />
+
                             <Table striped bordered hover>
                                 <thead>
                                     <tr>

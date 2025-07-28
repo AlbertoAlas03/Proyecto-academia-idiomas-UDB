@@ -4,3 +4,4 @@ export const url_list_cursos = process.env.REACT_APP_BACKEND_URL + 'list_profeso
 export const url_refresh_token = process.env.REACT_APP_BACKEND_URL + 'refresh_token'
 export const url_logout = process.env.REACT_APP_BACKEND_URL + 'logout'
 export const url_list_estudiantes = process.env.REACT_APP_BACKEND_URL + 'list_estudiante_curso'
+export const url_list_evaluaciones = process.env.REACT_APP_BACKEND_URL + 'list_evaluaciones_curso'

@@ -2,10 +2,13 @@ import { Navbar, Button, Container, NavDropdown } from "react-bootstrap"
 import { Link } from "react-router-dom"
 import Swal from "sweetalert2"
 import useLogin from "../hooks/use-login"
+import { useAuth } from "../hooks/contexts/auth-context"
 
 const NavBar = ({ setshow }) => {
 
     const { logout } = useLogin()
+
+    const { user } = useAuth()
 
     const handleLogout = async () => {
         const modal_confirm = await Swal.fire({
@@ -52,7 +55,7 @@ const NavBar = ({ setshow }) => {
                     <i className="bi bi-list"></i>
                 </Button>
                 <Navbar.Collapse className="justify-content-end">
-                    <NavDropdown title="Oscar Alberto Alas Guzmán" id="basic-nav-dropdown">
+                    <NavDropdown title={user ? `${user.nombre} ${user.apellido}` : ''} id="basic-nav-dropdown">
                         <NavDropdown.Item as={Link} to="/home/myprofile">Mi perfil</NavDropdown.Item>
                         <NavDropdown.Divider />
                         <NavDropdown.Item onClick={() => handleLogout()}>
@@ -61,7 +64,7 @@ const NavBar = ({ setshow }) => {
                     </NavDropdown>
                 </Navbar.Collapse>
             </Container>
-        </Navbar>
+        </Navbar >
     )
 }
 
