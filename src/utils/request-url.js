@@ -5,3 +5,6 @@ export const url_refresh_token = process.env.REACT_APP_BACKEND_URL + 'refresh_to
 export const url_logout = process.env.REACT_APP_BACKEND_URL + 'logout'
 export const url_list_estudiantes = process.env.REACT_APP_BACKEND_URL + 'list_estudiante_curso'
 export const url_list_evaluaciones = process.env.REACT_APP_BACKEND_URL + 'list_evaluaciones_curso'
+export const url_create_evaluacion = process.env.REACT_APP_BACKEND_URL + 'add_evaluacion'
+export const url_delete_evaluacion = process.env.REACT_APP_BACKEND_URL + 'delete_evaluacion'
+export const url_update_evaluacion = process.env.REACT_APP_BACKEND_URL + 'update_evaluacion'

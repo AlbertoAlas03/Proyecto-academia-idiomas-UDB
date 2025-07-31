@@ -15,7 +15,7 @@ const Student = () => {
 
     useEffect(() => {
         if (token) {
-            list_estudiantes()
+            list_estudiantes(token)
         }
     }, [curso_id])
 
