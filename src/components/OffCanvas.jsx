@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom"
 
 const OffCanvas = ({ show, setshow }) => {
 
-    const { courses, setNombre, setPrograma, setModalidad, programa, modalidad } = CallCourses()
+    const { courses, setNombre, setPrograma, setModalidad, programa, modalidad, setEstado } = CallCourses()
 
     const { curso_id } = useParams()
 
@@ -44,6 +44,7 @@ const OffCanvas = ({ show, setshow }) => {
                                     setNombre(Cursos.curso.nombre)
                                     setPrograma(Cursos.curso.programa)
                                     setModalidad(Cursos.curso.modalidad)
+                                    setEstado(Cursos.curso.estado)
                                 }
                                 }><i className="bi bi-mortarboard"></i> {Cursos.curso.programa} - {Cursos.curso.modalidad}</Nav.Link>
                             </Nav>

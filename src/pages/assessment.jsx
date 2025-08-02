@@ -13,12 +13,13 @@ const Assessment = () => {
 
     const [showAddModal, setShowAddModal] = useState(false)
     const [showUpdateModal, setShowUpdateModal] = useState(false)
+    const [UpdateData, setUpdateData] = useState(null)
 
     const { token } = useAuth()
 
     const { list_evaluaciones, evaluaciones, loading, delete_assessment, porcentaje_total } = useAssessment()
 
-    const { nombre, modalidad, programa } = CallCourses()
+    const { nombre, modalidad, programa, estado } = CallCourses()
 
     const { curso_id } = useParams()
 
@@ -89,13 +90,16 @@ const Assessment = () => {
         <>
             <Container className="album py-4">
                 <Container className="container">
-                    <h3 className="h3"><i className="bi bi-book"></i> Gestión de evaluaciones - {nombre} - {programa} - {modalidad}</h3>
+                    <h3 className="h3"><i className="bi bi-book"></i> Gestión de evaluaciones - {nombre} - {programa} - {modalidad} - <span className={
+                        estado === 'finalizado' ? 'text-danger' :
+                            estado === 'activo' ? 'text-success' : 'text-warning'
+                    }>{estado}</span></h3>
                     <hr />
                     <Button
                         className="btn btn-success"
                         style={{ marginBottom: '15px' }}
                         onClick={() => setShowAddModal(true)}
-                        disabled={porcentaje_total === 100}
+                        disabled={porcentaje_total === 100 || estado === 'finalizado'}
                     ><i className="bi bi-plus-lg"></i> Crear evaluación</Button>
                     {
                         evaluaciones.length > 0 ? (
@@ -125,8 +129,17 @@ const Assessment = () => {
                                                     <td className='text-center'>{new Date(Evaluacion.fecha_creacion).toISOString().split('T')[0]}</td>
                                                     <td>
                                                         <Container className="text-center">
-                                                            <Button className="btn btn-warning" style={{ marginRight: '10px' }} onClick={() => setShowUpdateModal(true)}><i className="bi bi-pencil-square"></i> Actualizar</Button>
-                                                            <Button className="btn btn-danger" onClick={() => handleDelete(Evaluacion.evaluacion_id)}><i className="bi bi-trash3"></i> Eliminar</Button>
+                                                            <Button className="btn btn-warning" style={{ marginRight: '10px' }} onClick={() => {
+                                                                const data = {
+                                                                    evaluacion_id: Evaluacion.evaluacion_id,
+                                                                    nombre: Evaluacion.nombre,
+                                                                    descripcion: Evaluacion.descripcion,
+                                                                    porcentaje: (Evaluacion.porcentaje) * 100
+                                                                }
+                                                                setUpdateData(data)
+                                                                setShowUpdateModal(true)
+                                                            }} disabled={estado === 'finalizado'}><i className="bi bi-pencil-square"></i> Actualizar</Button>
+                                                            <Button className="btn btn-danger" onClick={() => handleDelete(Evaluacion.evaluacion_id)} disabled={estado === 'finalizado'}><i className="bi bi-trash3"></i> Eliminar</Button>
                                                         </Container>
                                                     </td>
                                                 </tr>
@@ -149,7 +162,7 @@ const Assessment = () => {
             </Container>
 
             <AddAssessmentModal showModal={showAddModal} setShowModal={() => setShowAddModal(false)} list_evaluaciones={list_evaluaciones} token={token} />
-            <UpdateAssessmentModal showModal={showUpdateModal} setShowModal={() => setShowUpdateModal(false)} />
+            <UpdateAssessmentModal showModal={showUpdateModal} setShowModal={() => setShowUpdateModal(false)} UpdateData={UpdateData} token={token} list_evaluaciones={list_evaluaciones} />
         </>
     )
 }

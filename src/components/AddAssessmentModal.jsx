@@ -9,7 +9,7 @@ const AddAssessmentModal = ({ showModal, setShowModal, list_evaluaciones, token 
     const [isProcessing, setIsProcessing] = useState(false)
     const [name, setName] = useState("")
     const [description, setDescription] = useState("")
-    const [percent, setPercent] = useState("")
+    const [percent, setPercent] = useState(0)
 
     const { create_assessment } = useAssessment()
 
@@ -51,7 +51,7 @@ const AddAssessmentModal = ({ showModal, setShowModal, list_evaluaciones, token 
     const ClearForm = () => {
         setDescription("")
         setName("")
-        setPercent("")
+        setPercent(0)
     }
 
     return (
@@ -114,8 +114,11 @@ const AddAssessmentModal = ({ showModal, setShowModal, list_evaluaciones, token 
                                         type="number"
                                         step="0.01"
                                         placeholder="Ingrese el valor porcentual de la evaluación"
-                                        value={percent}
-                                        onChange={(e) => setPercent(parseFloat(e.target.value))}
+                                        value={percent === null || percent === undefined ? '' : percent}
+                                        onChange={(e) => {
+                                            const newValue = e.target.value;
+                                            setPercent(newValue === '' ? '' : parseFloat(newValue));
+                                        }}
                                     />
                                 </Form.Group>
 

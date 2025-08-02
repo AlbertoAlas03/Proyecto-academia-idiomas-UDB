@@ -8,6 +8,7 @@ export const CourseProvider = ({ children }) => {
     const [nombre, setNombre] = useState('')
     const [programa, setPrograma] = useState('')
     const [modalidad, setModalidad] = useState('')
+    const [estado, setEstado] = useState('')
 
     return (
         <CourseContext.Provider value={{
@@ -18,7 +19,9 @@ export const CourseProvider = ({ children }) => {
             programa,
             setPrograma,
             modalidad,
-            setModalidad
+            setModalidad,
+            estado,
+            setEstado
         }}>
             {children}
         </CourseContext.Provider>

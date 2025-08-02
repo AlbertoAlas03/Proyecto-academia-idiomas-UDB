@@ -4,12 +4,15 @@ import { useParams } from 'react-router-dom'
 import useRefreshToken from './use-refreshToken'
 import useLogin from './use-login'
 import { useState } from 'react'
+import { CallAssessment } from '../hooks/contexts/assessment-context'
 
 const useAssessment = () => {
 
     const [evaluaciones, setEvaluaciones] = useState([])
     const [porcentaje_total, setPorcentaje_total] = useState(0)
     const [loading, setLoading] = useState(true)
+
+    const { setAssessment } = CallAssessment()
 
     const { logout } = useLogin()
 
@@ -79,6 +82,7 @@ const useAssessment = () => {
 
         setEvaluaciones(data.data)
         setPorcentaje_total(data.total_porcentaje)
+        setAssessment(data.data)
         setLoading(false)
     }
 
@@ -213,6 +217,7 @@ const useAssessment = () => {
     const update_assessment = async (token, UpdateData) => {
 
         const RequestData = {
+            curso_id: curso_id,
             evaluacion_id: UpdateData.evaluacion_id,
             nombre: UpdateData.nombre,
             descripcion: UpdateData.descripcion,

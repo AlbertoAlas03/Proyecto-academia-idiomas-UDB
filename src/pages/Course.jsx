@@ -14,7 +14,7 @@ const Course = () => {
 
     const { token } = useAuth()
 
-    const { setNombre, setPrograma, setModalidad } = CallCourses()
+    const { setNombre, setPrograma, setModalidad, setEstado } = CallCourses()
 
     useEffect(() => {
         if (token) {
@@ -78,6 +78,7 @@ const Course = () => {
                                                             setNombre(Curso.curso.nombre)
                                                             setPrograma(Curso.curso.programa)
                                                             setModalidad(Curso.curso.modalidad)
+                                                            setEstado(Curso.curso.estado)
                                                         }}>
                                                             Ir al curso <i className="bi bi-arrow-right"></i>
                                                         </Button>

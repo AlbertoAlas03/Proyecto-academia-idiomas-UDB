@@ -8,3 +8,6 @@ export const url_list_evaluaciones = process.env.REACT_APP_BACKEND_URL + 'list_e
 export const url_create_evaluacion = process.env.REACT_APP_BACKEND_URL + 'add_evaluacion'
 export const url_delete_evaluacion = process.env.REACT_APP_BACKEND_URL + 'delete_evaluacion'
 export const url_update_evaluacion = process.env.REACT_APP_BACKEND_URL + 'update_evaluacion'
+export const url_list_notas = process.env.REACT_APP_BACKEND_URL + 'list_notas_estudiantes'
+export const url_registrar_nota = process.env.REACT_APP_BACKEND_URL + 'add_nota_estudiante'
+
