@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
-import useCourse from '../hooks/use-course';
 import useTeacherAssigment from '../hooks/use-teacher-assigment';
 import Swal from 'sweetalert2';
 import Select from 'react-select';
-
+import { CallCourseNotStarted } from '../hooks/course-not-started-context';
+import { CallTeacher } from '../hooks/teacher-context';
 
 const AssigmentTeacherModal = ({
     showModal,
@@ -24,9 +24,11 @@ const AssigmentTeacherModal = ({
     const [selectedTeacher, setSelectedTeacher] = useState(null)
     const [teacherId, setTeacherId] = useState('')
 
-    const { list_cursos_no_iniciados, course_not_started } = useCourse()
+    const { assign_teacher } = useTeacherAssigment()
 
-    const { list_teachers, teacher, assign_teacher } = useTeacherAssigment()
+    const { CourseNotStarted } = CallCourseNotStarted()
+
+    const { Teachers } = CallTeacher()
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -87,20 +89,15 @@ const AssigmentTeacherModal = ({
 
     }
 
-    const optionsTeacher = teacher.map((t) => ({
+    const optionsTeacher = Teachers.map((t) => ({
         value: t.usuario_id,
         label: `${t.nombre} ${t.apellido}`
     }));
 
-    const optionsCourse = course_not_started.map((c) => ({
+    const optionsCourse = CourseNotStarted.map((c) => ({
         value: c.curso_id,
         label: `${c.nombre} - ${c.programa} - ${c.modalidad}`
     }))
-
-    useEffect(() => {
-        list_cursos_no_iniciados(token)
-        list_teachers(token)
-    }, [])
 
     return (
         <Modal

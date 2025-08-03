@@ -7,12 +7,21 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import reportWebVitals from './reportWebVitals';
 import { AuthProvider } from './hooks/auth-context';
+import { LanguageProvider } from './hooks/language-context';
+import { TeacherProvider } from './hooks/teacher-context';
+import { CourseNotStartedProvider } from './hooks/course-not-started-context';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <AuthProvider>
-    {/* <React.StrictMode> */}
-      <App />
+    <LanguageProvider>
+      <CourseNotStartedProvider>
+        <TeacherProvider>
+          {/* <React.StrictMode> */}
+          <App />
+        </TeacherProvider>
+      </CourseNotStartedProvider>
+    </LanguageProvider>
     {/* </React.StrictMode> */}
   </AuthProvider>
 );

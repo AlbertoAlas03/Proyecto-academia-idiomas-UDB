@@ -3,11 +3,15 @@ import useRefreshToken from "./use-refreshToken"
 import { useAuth } from "./auth-context"
 import { useState } from "react"
 import useLogin from "./use-login"
+import { CallLanguage } from "./language-context"
 
 const useLanguage = () => {
 
     const [language, setLenguage] = useState([])
     const [search, setsearch] = useState(null)
+    const [loading, setLoading] = useState(true)
+
+    const { setLanguages } = CallLanguage()
 
     const { url_list_idiomas, url_add_idioma, url_delete_idioma, url_update_idioma, url_search_idioma } = Url()
 
@@ -19,6 +23,7 @@ const useLanguage = () => {
 
     const list_idiomas = async (token) => {
 
+        setLoading(true)
         const response = await fetch(url_list_idiomas, {
             method: 'GET',
             headers: {
@@ -77,6 +82,8 @@ const useLanguage = () => {
         const data = await response.json()
 
         setLenguage(data.data)
+        setLanguages(data.data)
+        setLoading(false)
     }
 
     const add_idioma = async (token, nombre) => {
@@ -301,7 +308,7 @@ const useLanguage = () => {
 
                     if (token_nuevo) {
 
-                        return await search_idioma(token_nuevo)
+                        return await search_idioma(token_nuevo, idioma_id)
 
                     } else {
                         return
@@ -338,7 +345,7 @@ const useLanguage = () => {
         return data
     }
 
-    return { list_idiomas, language, add_idioma, delete_idioma, update_idioma, search_idioma, search, setsearch }
+    return { list_idiomas, language, add_idioma, delete_idioma, update_idioma, search_idioma, search, setsearch, loading }
 
 }
 

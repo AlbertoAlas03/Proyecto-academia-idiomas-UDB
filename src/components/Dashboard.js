@@ -1,10 +1,11 @@
 import { useEffect } from "react"
 import useCount from "../hooks/use-count"
 import { useAuth } from '../hooks/auth-context'
+import { Container, Spinner } from "react-bootstrap"
 
 const Dashboard = () => {
 
-    const { count_registros, count } = useCount()
+    const { count_registros, count, loading } = useCount()
 
     const { token } = useAuth()
 
@@ -14,6 +15,20 @@ const Dashboard = () => {
         }
 
     }, [])
+
+    if (loading) {
+        return (
+            <Container
+                fluid
+                className="d-flex flex-column justify-content-center align-items-center"
+                style={{ height: '100vh', background: '#f5f7fa' }}
+            >
+                <Spinner animation="border" variant="primary" role="status" style={{ width: '4rem', height: '4rem' }} />
+
+                <p className="mt-4 fs-5 text-secondary">Cargando recursos, por favor espera...</p>
+            </Container>
+        )
+    }
 
     return (
         <>

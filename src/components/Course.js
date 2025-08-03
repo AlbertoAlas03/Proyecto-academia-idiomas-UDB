@@ -6,6 +6,7 @@ import NoData from './NoData'
 import Swal from "sweetalert2"
 import UpdateCourseModal from "./UpdateCourseModal"
 import Select from "react-select"
+import { Container, Spinner } from "react-bootstrap"
 
 const Course = () => {
 
@@ -16,7 +17,7 @@ const Course = () => {
     const [CourseSelected, setCourseSelected] = useState(null)
     const [courseID, setcourseID] = useState('')
 
-    const { list_course, course, delete_course, search_curso, courseSearched, setcourseSearched } = useCourse()
+    const { list_course, course, delete_course, search_curso, courseSearched, setcourseSearched, loading } = useCourse()
 
     const { token } = useAuth()
 
@@ -131,6 +132,20 @@ const Course = () => {
     useEffect(() => {
         list_course(token)
     }, [])
+
+    if (loading) {
+        return (
+            <Container
+                fluid
+                className="d-flex flex-column justify-content-center align-items-center"
+                style={{ height: '100vh', background: '#f5f7fa' }}
+            >
+                <Spinner animation="border" variant="primary" role="status" style={{ width: '4rem', height: '4rem' }} />
+
+                <p className="mt-4 fs-5 text-secondary">Cargando cursos, por favor espera...</p>
+            </Container>
+        )
+    }
 
     return (
         <>
@@ -353,18 +368,10 @@ const Course = () => {
 
                 }
             </div >
-            {
-                showAddModal && (
-                    <AddCourseModal showModal={showAddModal} setShowModal={setShowAddModal} token={token} list_course={list_course} setcourseID={setcourseID} setCourseSelected={setCourseSelected} setisSearching={setisSearching} setcourseSearched={setcourseSearched} />
-                )
-            }
 
-            {
-                showUpdateModal && (
-                    <UpdateCourseModal showModal={showUpdateModal} setShowModal={setShowUpdateModal} updateData={updateData} setUpdateData={setUpdateData} token={token} list_course={list_course} setcourseID={setcourseID} setCourseSelected={setCourseSelected} setisSearching={setisSearching} setcourseSearched={setcourseSearched} />
-                )
-            }
+            <AddCourseModal showModal={showAddModal} setShowModal={setShowAddModal} token={token} list_course={list_course} setcourseID={setcourseID} setCourseSelected={setCourseSelected} setisSearching={setisSearching} setcourseSearched={setcourseSearched} />
 
+            <UpdateCourseModal showModal={showUpdateModal} setShowModal={setShowUpdateModal} updateData={updateData} token={token} list_course={list_course} setcourseID={setcourseID} setCourseSelected={setCourseSelected} setisSearching={setisSearching} setcourseSearched={setcourseSearched} />
 
         </>
     )

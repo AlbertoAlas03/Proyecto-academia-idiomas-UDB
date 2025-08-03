@@ -7,6 +7,7 @@ import useRefreshToken from '../hooks/use-refreshToken'
 const useCount = () => {
 
     const [count, setCount] = useState([])
+    const [loading, setLoading] = useState(true)
 
     const { url_count } = url()
     const { logout } = useLogin()
@@ -15,7 +16,7 @@ const useCount = () => {
     const { setToken } = useAuth()
 
     const count_registros = async (token) => {
-
+        setLoading(true)
         const response = await fetch(url_count, {
             method: 'GET',
             headers: {
@@ -72,9 +73,10 @@ const useCount = () => {
         const data = await response.json()
 
         setCount(data.data)
+        setLoading(false)
     }
 
-    return { count_registros, count }
+    return { count_registros, count, loading }
 }
 
 export default useCount

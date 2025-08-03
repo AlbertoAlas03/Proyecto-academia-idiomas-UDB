@@ -5,6 +5,7 @@ import AddUserModal from "./AddUserModal";
 import UpdateUserModal from "./UpdateUserModal";
 import Swal from "sweetalert2";
 import NoData from "./NoData";
+import { Container, Spinner } from "react-bootstrap";
 import Select from "react-select";
 
 const User = () => {
@@ -16,7 +17,7 @@ const User = () => {
     const [UserSelected, setUserSelected] = useState(null)
     const [userID, setuserID] = useState('')
 
-    const { list_user, usuarios, enable_user, disable_user, search_usuario, searchData, setsearchData } = useUser()
+    const { list_user, usuarios, enable_user, disable_user, search_usuario, searchData, setsearchData, loading } = useUser()
     const { token, user } = useAuth()
 
     const optionsUser = usuarios.map((u) => ({
@@ -146,6 +147,20 @@ const User = () => {
     useEffect(() => {
         list_user(token)
     }, [])
+
+    if (loading) {
+        return (
+            <Container
+                fluid
+                className="d-flex flex-column justify-content-center align-items-center"
+                style={{ height: '100vh', background: '#f5f7fa' }}
+            >
+                <Spinner animation="border" variant="primary" role="status" style={{ width: '4rem', height: '4rem' }} />
+
+                <p className="mt-4 fs-5 text-secondary">Cargando tus usuarios, por favor espera...</p>
+            </Container>
+        )
+    }
 
     return (
         <>

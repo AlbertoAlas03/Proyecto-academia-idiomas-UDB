@@ -8,6 +8,7 @@ const useUser = () => {
 
     const [usuarios, setUsuarios] = useState([])
     const [searchData, setsearchData] = useState(null)
+    const [loading, setLoading] = useState(true)
 
     const {
         url_list_user,
@@ -26,6 +27,8 @@ const useUser = () => {
     const { setToken, setUser } = useAuth()
 
     const list_user = async (token) => {
+
+        setLoading(true)
 
         const response = await fetch(url_list_user, {
             method: 'GET',
@@ -85,7 +88,7 @@ const useUser = () => {
         const data = await response.json()
 
         setUsuarios(data.data)
-
+        setLoading(false)
     }
 
     const add_usuario = async (token, dataUser) => {
@@ -448,7 +451,7 @@ const useUser = () => {
                     const token_nuevo = response_token.token_nuevo
 
                     if (token_nuevo) {
-                        return await search_usuario(token_nuevo, Updatedata)
+                        return await update_account(token_nuevo, Updatedata)
                     } else {
                         return
                     }
@@ -494,7 +497,8 @@ const useUser = () => {
         search_usuario,
         searchData,
         setsearchData,
-        update_account
+        update_account,
+        loading
     }
 }
 

@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react"
 import { Modal, Button, Form } from "react-bootstrap"
-import useLanguage from "../hooks/use-language"
 import useCourse from "../hooks/use-course"
 import Swal from "sweetalert2"
+import { CallLanguage } from "../hooks/language-context"
+import Select from "react-select"
+import { useMemo } from "react"
 
-const UpdateCourseModal = ({ showModal, setShowModal, updateData, setUpdateData, token, list_course, setcourseID, setCourseSelected, setisSearching, setcourseSearched }) => {
+const UpdateCourseModal = ({ showModal, setShowModal, updateData, token, list_course, setcourseID, setCourseSelected, setisSearching, setcourseSearched }) => {
 
     const [error, setError] = useState(null)
     const [isProcessing, setisProcessing] = useState(false)
@@ -18,10 +20,24 @@ const UpdateCourseModal = ({ showModal, setShowModal, updateData, setUpdateData,
     const [date_init, setDate_init] = useState(null)
     const [date_finish, setDate_finish] = useState(null)
     const [cupo, setCupo] = useState('')
+    const [LanguageSelected, setLanguageSelected] = useState([])
 
-    const { list_idiomas, language } = useLanguage()
+    const { Language } = CallLanguage()
 
     const { update_course } = useCourse()
+
+    const optionsLanguage = useMemo(() =>
+        Language.map((L) => ({
+            value: L.idioma_id,
+            label: `${L.nombre}`
+        })),
+        [Language]);
+
+    const handleChangeLanguage = (LanguageSelected) => {
+
+        setLanguageSelected(LanguageSelected)
+        setSelectedLanguageId(LanguageSelected ? LanguageSelected.value : '')
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -82,6 +98,7 @@ const UpdateCourseModal = ({ showModal, setShowModal, updateData, setUpdateData,
         setProgram('')
         setModalidad('')
         setHorario('')
+        setLanguageSelected([])
     }
 
     useEffect(() => {
@@ -96,9 +113,16 @@ const UpdateCourseModal = ({ showModal, setShowModal, updateData, setUpdateData,
             setDate_init(updateData.fecha_inicio)
             setDate_finish(updateData.fecha_fin)
             setCupo(updateData.capacidad_maxima || 'no definido')
-            list_idiomas(token)
         }
     }, [updateData])
+
+    useEffect(() => {
+        if (selectedLanguageId && optionsLanguage.length > 0) {
+            const languageObj = optionsLanguage.find(option => option.value === selectedLanguageId);
+            setLanguageSelected(languageObj || null);
+        }
+    }, [selectedLanguageId, optionsLanguage]);
+
 
     return (
         <Modal
@@ -158,25 +182,15 @@ const UpdateCourseModal = ({ showModal, setShowModal, updateData, setUpdateData,
 
                                 <Form.Group className="mb-3" controlId="formBasicLanguageCourseedit">
                                     <Form.Label><i className="bi bi-translate"></i> Idioma</Form.Label>
-                                    <Form.Select
-                                        value={selectedLanguageId}
-                                        onChange={(e) => setSelectedLanguageId(e.target.value)}
-                                    >
-                                        <option value="">Seleccionar idioma</option>
-                                        {
-                                            language.length > 0 ? (
-                                                language.map((Language) => (
-                                                    <option key={Language.idioma_id} value={Language.idioma_id}>
-                                                        {Language.nombre}
-                                                    </option>
-                                                ))
-                                            ) : (
-                                                <option value="">
-                                                    No hay idiomas disponibles...
-                                                </option>
-                                            )
-                                        }
-                                    </Form.Select>
+                                    <Select
+                                        className="w-100"
+                                        options={optionsLanguage}
+                                        value={LanguageSelected}
+                                        onChange={handleChangeLanguage}
+                                        placeholder="Seleccionar una evaluación..."
+                                        isClearable
+                                        noOptionsMessage={() => 'No hay coincidencias'}
+                                    />
                                 </Form.Group>
 
                                 <Form.Group className="mb-3" controlId="formBasicProgramCourseedit">

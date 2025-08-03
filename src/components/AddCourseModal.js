@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
-import useLanguage from '../hooks/use-language';
 import useCourse from '../hooks/use-course';
 import Swal from 'sweetalert2';
+import { CallLanguage } from '../hooks/language-context';
+import Select from "react-select"
 
 const AddCourseModal = ({ showModal, setShowModal, token, list_course, setcourseID, setCourseSelected, setisSearching, setcourseSearched }) => {
 
@@ -17,10 +18,22 @@ const AddCourseModal = ({ showModal, setShowModal, token, list_course, setcourse
     const [date_finish, setDate_finish] = useState('')
     const [cupo, setCupo] = useState('')
     const [selectedLanguageId, setSelectedLanguageId] = useState('')
+    const [LanguageSelected, setLanguageSelected] = useState([])
 
-    const { list_idiomas, language } = useLanguage()
+    const { Language } = CallLanguage()
 
     const { add_course } = useCourse()
+
+    const optionsLanguage = Language.map((L) => ({
+        value: L.idioma_id,
+        label: `${L.nombre}`
+    }));
+
+    const handleChangeLanguage = (LanguageSelected) => {
+
+        setLanguageSelected(LanguageSelected)
+        setSelectedLanguageId(LanguageSelected ? LanguageSelected.value : '')
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -78,11 +91,8 @@ const AddCourseModal = ({ showModal, setShowModal, token, list_course, setcourse
         setDate_init('')
         setCupo('')
         setSelectedLanguageId('')
+        setLanguageSelected([])
     }
-
-    useEffect(() => {
-        list_idiomas(token)
-    }, [])
 
     return (
         <Modal
@@ -142,25 +152,15 @@ const AddCourseModal = ({ showModal, setShowModal, token, list_course, setcourse
 
                                 <Form.Group className="mb-3" controlId="formBasicLanguageCourse">
                                     <Form.Label><i className="bi bi-translate"></i> Idioma</Form.Label>
-                                    <Form.Select
-                                        value={selectedLanguageId}
-                                        onChange={(e) => setSelectedLanguageId(e.target.value)}
-                                    >
-                                        <option value="">Seleccionar idioma</option>
-                                        {
-                                            language.length > 0 ? (
-                                                language.map((Language) => (
-                                                    <option key={Language.idioma_id} value={Language.idioma_id}>
-                                                        {Language.nombre}
-                                                    </option>
-                                                ))
-                                            ) : (
-                                                <option value="">
-                                                    No hay idiomas disponibles...
-                                                </option>
-                                            )
-                                        }
-                                    </Form.Select>
+                                    <Select
+                                        className="w-100"
+                                        options={optionsLanguage}
+                                        value={LanguageSelected}
+                                        onChange={handleChangeLanguage}
+                                        placeholder="Seleccionar un idioma..."
+                                        isClearable
+                                        noOptionsMessage={() => 'No hay coincidencias'}
+                                    />
                                 </Form.Group>
 
                                 <Form.Group className="mb-3" controlId="formBasicProgramCourse">

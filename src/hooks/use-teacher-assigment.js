@@ -3,12 +3,13 @@ import useRefreshToken from "./use-refreshToken"
 import { useAuth } from "./auth-context"
 import { useState } from "react"
 import useLogin from "./use-login"
+import { CallTeacher } from "./teacher-context"
 
 const useTeacherAssigment = () => {
 
     const [teacherAssigment, setTeacherAssigment] = useState([])
-    const [teacher, setTeacher] = useState([])
     const [searchData, setsearchData] = useState(null)
+    const [loading, setLoading] = useState(true)
 
     const {
         url_list_profesores_asignados,
@@ -19,6 +20,8 @@ const useTeacherAssigment = () => {
         url_search_asignacion
     } = Url()
 
+    const { setTeachers } = CallTeacher()
+
     const { refresh } = useRefreshToken()
 
     const { setToken } = useAuth()
@@ -27,6 +30,7 @@ const useTeacherAssigment = () => {
 
     const list_teacher_assigment = async (token) => {
 
+        setLoading(true)
         const response = await fetch(url_list_profesores_asignados, {
             method: 'GET',
             headers: {
@@ -85,6 +89,7 @@ const useTeacherAssigment = () => {
         const data = await response.json()
 
         setTeacherAssigment(data.data)
+        setLoading(false)
     }
 
     const list_teachers = async (token) => {
@@ -146,7 +151,7 @@ const useTeacherAssigment = () => {
 
         const data = await response.json()
 
-        setTeacher(data.data)
+        setTeachers(data.data)
     }
 
     const assign_teacher = async (token, data_assignment) => {
@@ -419,13 +424,13 @@ const useTeacherAssigment = () => {
         list_teacher_assigment,
         teacherAssigment,
         list_teachers,
-        teacher,
         assign_teacher,
         delete_assingment,
         update_assignment,
         search_assignment,
         searchData,
-        setsearchData
+        setsearchData,
+        loading
     }
 }
 

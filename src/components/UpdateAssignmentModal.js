@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
 import Select from 'react-select';
-import useCourse from '../hooks/use-course';
 import useTeacherAssigment from '../hooks/use-teacher-assigment';
 import Swal from 'sweetalert2';
+import { CallCourseNotStarted } from '../hooks/course-not-started-context';
+import { CallTeacher } from '../hooks/teacher-context';
 
 const UpdateAssignmentModal = ({
     showModal,
@@ -25,9 +26,11 @@ const UpdateAssignmentModal = ({
     const [teacherId, setTeacherId] = useState('')
     const [assignmentID, setAssignmentID] = useState('')
 
-    const { list_cursos_no_iniciados, course_not_started } = useCourse()
+    const { update_assignment } = useTeacherAssigment()
 
-    const { list_teachers, teacher, update_assignment } = useTeacherAssigment()
+    const { Teachers } = CallTeacher()
+
+    const { CourseNotStarted } = CallCourseNotStarted()
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -82,12 +85,12 @@ const UpdateAssignmentModal = ({
         setCourseId(CourseSelected ? CourseSelected.value : '')
     }
 
-    const optionsTeacher = teacher.map((t) => ({
+    const optionsTeacher = Teachers.map((t) => ({
         value: t.usuario_id,
         label: `${t.nombre} ${t.apellido}`
     }));
 
-    const optionsCourse = course_not_started.map((c) => ({
+    const optionsCourse = CourseNotStarted.map((c) => ({
         value: c.curso_id,
         label: `${c.nombre} - ${c.programa} - ${c.modalidad}`
     }))
@@ -101,12 +104,7 @@ const UpdateAssignmentModal = ({
     }
 
     useEffect(() => {
-        list_cursos_no_iniciados(token)
-        list_teachers(token)
-    }, [])
-
-    useEffect(() => {
-        if (updateData && teacher.length > 0 && course_not_started.length > 0) {
+        if (updateData && Teachers.length > 0 && CourseNotStarted.length > 0) {
             const FoundTeacher = optionsTeacher.find(opt => opt.value === updateData.profesor_id)
             setSelectedTeacher(FoundTeacher)
             setTeacherId(updateData.profesor_id)
@@ -117,7 +115,7 @@ const UpdateAssignmentModal = ({
 
             setAssignmentID(updateData.asignacion_id)
         }
-    }, [updateData, teacher, course_not_started])
+    }, [updateData, Teachers, CourseNotStarted])
 
     return (
         <Modal

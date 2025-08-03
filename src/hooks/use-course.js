@@ -3,16 +3,19 @@ import Url from "../utils/url-data"
 import useRefreshToken from "./use-refreshToken"
 import { useAuth } from "./auth-context"
 import useLogin from "./use-login"
+import { CallCourseNotStarted } from "./course-not-started-context"
 
 const useCourse = () => {
 
     const [course, setCourse] = useState([])
-    const [course_not_started, setcourse_not_started] = useState([])
     const [courseSearched, setcourseSearched] = useState(null)
+    const [loading, setLoading] = useState(true)
 
     const { url_list_cursos, url_add_curso, url_delete_curso, url_update_curso, url_list_cursos_no_iniciados, url_search_curso } = Url()
 
     const { refresh } = useRefreshToken()
+
+    const { setCourseNotStarted } = CallCourseNotStarted()
 
     const { setToken } = useAuth()
 
@@ -20,6 +23,7 @@ const useCourse = () => {
 
     const list_course = async (token) => {
 
+        setLoading(true)
         const response = await fetch(url_list_cursos, {
             method: 'GET',
             headers: {
@@ -78,6 +82,7 @@ const useCourse = () => {
         const data = await response.json()
 
         setCourse(data.data)
+        setLoading(false)
     }
 
 
@@ -355,7 +360,7 @@ const useCourse = () => {
 
         const data = await response.json()
 
-        setcourse_not_started(data.data)
+        setCourseNotStarted(data.data)
     }
 
     const search_curso = async (token, curso_id) => {
@@ -423,7 +428,18 @@ const useCourse = () => {
         return data
     }
 
-    return { list_course, course, add_course, delete_course, update_course, list_cursos_no_iniciados, course_not_started, search_curso, courseSearched, setcourseSearched }
+    return {
+        list_course,
+        course,
+        add_course,
+        delete_course,
+        update_course,
+        list_cursos_no_iniciados,
+        search_curso,
+        courseSearched,
+        setcourseSearched,
+        loading
+    }
 }
 
 export default useCourse

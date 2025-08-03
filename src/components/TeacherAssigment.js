@@ -6,6 +6,8 @@ import AssigmentTeacherModal from "./AssigmentTeacherModal"
 import Swal from "sweetalert2"
 import UpdateAssignmentModal from "./UpdateAssignmentModal"
 import Select from "react-select"
+import { Container, Spinner } from "react-bootstrap"
+import useCourse from "../hooks/use-course"
 
 const TeacherAssigment = () => {
 
@@ -16,7 +18,18 @@ const TeacherAssigment = () => {
     const [AssignmentSelected, setAssignmentSelected] = useState(null)
     const [assignmentID, setassignmentID] = useState('')
 
-    const { list_teacher_assigment, teacherAssigment, delete_assingment, search_assignment, searchData, setsearchData } = useTeacherAssigment()
+    const { list_cursos_no_iniciados } = useCourse()
+
+    const {
+        list_teacher_assigment,
+        teacherAssigment,
+        delete_assingment,
+        search_assignment,
+        searchData,
+        setsearchData,
+        loading,
+        list_teachers
+    } = useTeacherAssigment()
 
     const { token } = useAuth()
 
@@ -122,7 +135,23 @@ const TeacherAssigment = () => {
 
     useEffect(() => {
         list_teacher_assigment(token)
+        list_cursos_no_iniciados(token)
+        list_teachers(token)
     }, [])
+
+    if (loading) {
+        return (
+            <Container
+                fluid
+                className="d-flex flex-column justify-content-center align-items-center"
+                style={{ height: '100vh', background: '#f5f7fa' }}
+            >
+                <Spinner animation="border" variant="primary" role="status" style={{ width: '4rem', height: '4rem' }} />
+
+                <p className="mt-4 fs-5 text-secondary">Cargando, por favor espera...</p>
+            </Container>
+        )
+    }
 
     return (
         <>

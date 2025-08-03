@@ -6,6 +6,7 @@ import UpdateLanguageModal from "./UpdateLanguageModal"
 import Swal from "sweetalert2"
 import NoData from "./NoData"
 import Select from "react-select"
+import { Container, Spinner } from "react-bootstrap"
 
 const Language = () => {
 
@@ -16,7 +17,7 @@ const Language = () => {
     const [idiomaID, setidiomaID] = useState('')
     const [isSearching, setisSearching] = useState(false)
 
-    const { list_idiomas, language, delete_idioma, search_idioma, search, setsearch } = useLanguage()
+    const { list_idiomas, language, delete_idioma, search_idioma, search, setsearch, loading } = useLanguage()
 
     const { token } = useAuth()
 
@@ -107,6 +108,20 @@ const Language = () => {
     useEffect(() => {
         list_idiomas(token)
     }, [])
+
+    if (loading) {
+        return (
+            <Container
+                fluid
+                className="d-flex flex-column justify-content-center align-items-center"
+                style={{ height: '100vh', background: '#f5f7fa' }}
+            >
+                <Spinner animation="border" variant="primary" role="status" style={{ width: '4rem', height: '4rem' }} />
+
+                <p className="mt-4 fs-5 text-secondary">Cargando idiomas, por favor espera...</p>
+            </Container>
+        )
+    }
 
     return (
         <>
