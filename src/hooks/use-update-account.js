@@ -1,39 +1,34 @@
-import { url_list_estudiantes } from '../utils/request-url'
-import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { url_update_account } from '../utils/request-url'
 import useRefreshToken from './use-refreshToken'
 import { useAuth } from './contexts/auth-context'
 import useLogin from './use-login'
 
-const useStudent = () => {
-
-    const [student, setStudent] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [paginaActual, setPaginaActual] = useState(1)
-    const [totalPaginas, setTotalPaginas] = useState(1)
-    const limite = 12
-
-    const { logout } = useLogin()
-
-    const { setToken } = useAuth()
+const useUpdateAccount = () => {
 
     const { refresh } = useRefreshToken()
 
-    const { curso_id } = useParams()
+    const { logout } = useLogin()
 
-    const list_estudiantes = async (token) => {
+    const { setToken, setUser } = useAuth()
 
-        setLoading(true)
+    const update_account = async (token, updateData) => {
 
-        const response = await fetch(url_list_estudiantes + `?page=${paginaActual}&limit=${limite}`, {
-            method: 'POST',
+        const RequestData = {
+            usuario_id: updateData.usuario_id,
+            nombre: updateData.nombre,
+            apellido: updateData.apellido
+        }
+
+        const response = await fetch(url_update_account, {
+            method: 'PUT',
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
                 "authorization": `Bearer ${token}`
             },
-            body: JSON.stringify({ curso_id })
+            body: JSON.stringify(RequestData)
         })
+
 
         if (!response.ok) {
 
@@ -50,7 +45,7 @@ const useStudent = () => {
                     const token_nuevo = response_token.token_nuevo
 
                     if (token_nuevo) {
-                        return await list_estudiantes(token_nuevo)
+                        return await update_account(token_nuevo, updateData)
                     } else {
                         return
                     }
@@ -80,13 +75,11 @@ const useStudent = () => {
         }
 
         const data = await response.json()
-
-        setStudent(data.data)
-        setTotalPaginas(data.totalPaginas)
-        setLoading(false)
+        setUser(data.usuario)
+        return data
     }
 
-    return { list_estudiantes, student, loading, paginaActual, setPaginaActual, totalPaginas }
+    return { update_account }
 }
 
-export default useStudent
+export default useUpdateAccount

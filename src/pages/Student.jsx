@@ -14,7 +14,7 @@ const Student = () => {
     const [name, setName] = useState('')
     const [lastName, setLastName] = useState('')
 
-    const { list_estudiantes, student, loading } = useStudent()
+    const { list_estudiantes, student, loading, paginaActual, setPaginaActual, totalPaginas } = useStudent()
     const { token } = useAuth()
     const { nombre, modalidad, programa, estado } = CallCourses()
     const { curso_id } = useParams()
@@ -23,7 +23,19 @@ const Student = () => {
         if (token) {
             list_estudiantes(token)
         }
-    }, [curso_id])
+    }, [curso_id, paginaActual])
+
+    const siguiente = () => {
+        if (paginaActual < totalPaginas) {
+            setPaginaActual(paginaActual + 1)
+        }
+    }
+
+    const anterior = () => {
+        if (paginaActual > 1) {
+            setPaginaActual(paginaActual - 1)
+        }
+    }
 
     if (loading) {
         return (
@@ -96,6 +108,43 @@ const Student = () => {
 
                                     </tbody>
                                 </Table>
+                                <Container className="d-flex justify-content-center">
+                                    <ul className="pagination">
+
+                                        <li className={`page-item ${paginaActual === 1 ? 'disabled' : ''}`}>
+                                            <Button className="page-link" onClick={anterior} disabled={paginaActual === 1}>
+                                                ← Anterior
+                                            </Button>
+                                        </li>
+
+                                        {Array.from({ length: totalPaginas }, (_, index) => {
+                                            const numero = index + 1;
+                                            return (
+                                                <li
+                                                    key={numero}
+                                                    className={`page-item ${paginaActual === numero ? 'active' : ''}`}
+                                                >
+                                                    <Button
+                                                        className="page-link"
+                                                        onClick={() => setPaginaActual(numero)}
+                                                    >
+                                                        {numero}
+                                                    </Button>
+                                                </li>
+                                            );
+                                        })}
+
+                                        <li className={`page-item ${paginaActual === totalPaginas ? 'disabled' : ''}`}>
+                                            <Button
+                                                className="page-link"
+                                                onClick={siguiente}
+                                                disabled={paginaActual === totalPaginas}
+                                            >
+                                                Siguiente →
+                                            </Button>
+                                        </li>
+                                    </ul>
+                                </Container>
                             </>
                         ) : (
                             <Container className="d-flex flex-column justify-content-center align-items-center" style={{ minHeight: '70vh' }}>
