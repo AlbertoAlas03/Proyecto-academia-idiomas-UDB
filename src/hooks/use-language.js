@@ -10,6 +10,9 @@ const useLanguage = () => {
     const [language, setLenguage] = useState([])
     const [search, setsearch] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [paginaActual, setPaginaActual] = useState(1);
+    const [totalPaginas, setTotalPaginas] = useState(1);
+    const limite = 12;
 
     const { setLanguages } = CallLanguage()
 
@@ -24,7 +27,8 @@ const useLanguage = () => {
     const list_idiomas = async (token) => {
 
         setLoading(true)
-        const response = await fetch(url_list_idiomas, {
+
+        const response = await fetch(url_list_idiomas + `?page=${paginaActual}&limit=${limite}`, {
             method: 'GET',
             headers: {
                 "Accept": "application/json",
@@ -83,6 +87,7 @@ const useLanguage = () => {
 
         setLenguage(data.data)
         setLanguages(data.data)
+        setTotalPaginas(data.totalPaginas)
         setLoading(false)
     }
 
@@ -345,7 +350,20 @@ const useLanguage = () => {
         return data
     }
 
-    return { list_idiomas, language, add_idioma, delete_idioma, update_idioma, search_idioma, search, setsearch, loading }
+    return {
+        list_idiomas,
+        language,
+        add_idioma,
+        delete_idioma,
+        update_idioma,
+        search_idioma,
+        search,
+        setsearch,
+        loading,
+        totalPaginas,
+        paginaActual,
+        setPaginaActual
+    }
 
 }
 

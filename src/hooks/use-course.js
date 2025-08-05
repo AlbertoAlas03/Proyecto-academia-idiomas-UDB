@@ -10,6 +10,9 @@ const useCourse = () => {
     const [course, setCourse] = useState([])
     const [courseSearched, setcourseSearched] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [paginaActual, setPaginaActual] = useState(1);
+    const [totalPaginas, setTotalPaginas] = useState(1);
+    const limite = 12;
 
     const { url_list_cursos, url_add_curso, url_delete_curso, url_update_curso, url_list_cursos_no_iniciados, url_search_curso } = Url()
 
@@ -24,7 +27,7 @@ const useCourse = () => {
     const list_course = async (token) => {
 
         setLoading(true)
-        const response = await fetch(url_list_cursos, {
+        const response = await fetch(url_list_cursos + `?page=${paginaActual}&limit=${limite}`, {
             method: 'GET',
             headers: {
                 "Accept": "application/json",
@@ -82,6 +85,7 @@ const useCourse = () => {
         const data = await response.json()
 
         setCourse(data.data)
+        setTotalPaginas(data.totalPaginas)
         setLoading(false)
     }
 
@@ -438,7 +442,10 @@ const useCourse = () => {
         search_curso,
         courseSearched,
         setcourseSearched,
-        loading
+        loading,
+        totalPaginas,
+        paginaActual,
+        setPaginaActual
     }
 }
 

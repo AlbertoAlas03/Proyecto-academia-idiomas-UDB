@@ -17,7 +17,7 @@ const Course = () => {
     const [CourseSelected, setCourseSelected] = useState(null)
     const [courseID, setcourseID] = useState('')
 
-    const { list_course, course, delete_course, search_curso, courseSearched, setcourseSearched, loading } = useCourse()
+    const { list_course, course, delete_course, search_curso, courseSearched, setcourseSearched, loading, totalPaginas, paginaActual, setPaginaActual } = useCourse()
 
     const { token } = useAuth()
 
@@ -129,9 +129,21 @@ const Course = () => {
         setcourseSearched(null)
     }
 
+    const siguiente = () => {
+        if (paginaActual < totalPaginas) {
+            setPaginaActual(paginaActual + 1)
+        }
+    }
+
+    const anterior = () => {
+        if (paginaActual > 1) {
+            setPaginaActual(paginaActual - 1)
+        }
+    }
+
     useEffect(() => {
         list_course(token)
-    }, [])
+    }, [paginaActual])
 
     if (loading) {
         return (
@@ -273,94 +285,133 @@ const Course = () => {
                         </div>
                     ) : (
                         course.length > 0 ? (
-                            <div className="table-responsive">
-                                <table className="table table-striped table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">Nombre</th>
-                                            <th scope="col">Descripción</th>
-                                            <th scope="col">Idioma</th>
-                                            <th scope="col">Programa</th>
-                                            <th scope="col">Modalidad</th>
-                                            <th scope="col">Horario</th>
-                                            <th scope="col">Fecha inicio</th>
-                                            <th scope="col">Fecha fin</th>
-                                            <th scope="col">Cupos</th>
-                                            <th scope="col">Estado</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {
-                                            course.map((Course) => (
-                                                <tr key={Course.curso_id}>
-                                                    <th scope="row">{Course.curso_id}</th>
-                                                    <td>{Course.nombre}</td>
-                                                    <td>{Course.descripcion}</td>
-                                                    <td>{Course.idioma.nombre}</td>
-                                                    <td>{Course.programa}</td>
-                                                    <td>{Course.modalidad}</td>
-                                                    <td>{Course.horario}</td>
-                                                    <td>{new Date(Course.fecha_inicio).toISOString().split('T')[0]}</td>
-                                                    <td>{new Date(Course.fecha_fin).toISOString().split('T')[0]}</td>
-                                                    <td className="text-center">{Course.capacidad_maxima}</td>
-                                                    <td className="text-center">
-                                                        <span className={
-                                                            Course.estado === 'activo' ? 'badge text-bg-success' : Course.estado === 'finalizado' ? 'badge text-bg-danger' : 'badge text-bg-warning'
-                                                        }>
-                                                            {
-                                                                Course.estado === 'activo' ? 'activo' : Course.estado === 'finalizado' ? 'finalizado' : 'no iniciado'
-                                                            }
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <div className="d-flex">
-                                                            <button type="button" className='btn btn-warning' onClick={() => {
-
-                                                                if (Course.estado === 'activo' || Course.estado === 'finalizado') {
-                                                                    modal_warning_udpate()
-                                                                } else {
-
-                                                                    const data = {
-                                                                        curso_id: Course.curso_id,
-                                                                        idioma_id: Course.idioma.idioma_id,
-                                                                        nombre: Course.nombre,
-                                                                        descripcion: Course.descripcion,
-                                                                        programa: Course.programa,
-                                                                        modalidad: Course.modalidad,
-                                                                        horario: Course.horario,
-                                                                        fecha_inicio: new Date(Course.fecha_inicio).toISOString().split('T')[0],
-                                                                        fecha_fin: new Date(Course.fecha_fin).toISOString().split('T')[0],
-                                                                        capacidad_maxima: Course.capacidad_maxima
-                                                                    }
-
-                                                                    setUpdateData(data)
-
-                                                                    setShowUpdateModal(true)
+                            <>
+                                <div className="table-responsive">
+                                    <table className="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Descripción</th>
+                                                <th scope="col">Idioma</th>
+                                                <th scope="col">Programa</th>
+                                                <th scope="col">Modalidad</th>
+                                                <th scope="col">Horario</th>
+                                                <th scope="col">Fecha inicio</th>
+                                                <th scope="col">Fecha fin</th>
+                                                <th scope="col">Cupos</th>
+                                                <th scope="col">Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                course.map((Course) => (
+                                                    <tr key={Course.curso_id}>
+                                                        <th scope="row">{Course.curso_id}</th>
+                                                        <td>{Course.nombre}</td>
+                                                        <td>{Course.descripcion}</td>
+                                                        <td>{Course.idioma.nombre}</td>
+                                                        <td>{Course.programa}</td>
+                                                        <td>{Course.modalidad}</td>
+                                                        <td>{Course.horario}</td>
+                                                        <td>{new Date(Course.fecha_inicio).toISOString().split('T')[0]}</td>
+                                                        <td>{new Date(Course.fecha_fin).toISOString().split('T')[0]}</td>
+                                                        <td className="text-center">{Course.capacidad_maxima}</td>
+                                                        <td className="text-center">
+                                                            <span className={
+                                                                Course.estado === 'activo' ? 'badge text-bg-success' : Course.estado === 'finalizado' ? 'badge text-bg-danger' : 'badge text-bg-warning'
+                                                            }>
+                                                                {
+                                                                    Course.estado === 'activo' ? 'activo' : Course.estado === 'finalizado' ? 'finalizado' : 'no iniciado'
                                                                 }
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <div className="d-flex">
+                                                                <button type="button" className='btn btn-warning' onClick={() => {
 
-                                                            }}><i className='bi bi-pencil-square'></i> Actualizar</button>
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn-danger"
-                                                                style={{ marginLeft: '10px' }}
-                                                                onClick={() => {
-                                                                    if (Course.estado === 'activo') {
-                                                                        Modal_warning_delete()
+                                                                    if (Course.estado === 'activo' || Course.estado === 'finalizado') {
+                                                                        modal_warning_udpate()
                                                                     } else {
-                                                                        handleDelete(Course.curso_id)
-                                                                    }
-                                                                }}
-                                                            ><i className="bi bi-trash3"></i> Eliminar</button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        }
 
-                                    </tbody>
-                                </table>
-                            </div>
+                                                                        const data = {
+                                                                            curso_id: Course.curso_id,
+                                                                            idioma_id: Course.idioma.idioma_id,
+                                                                            nombre: Course.nombre,
+                                                                            descripcion: Course.descripcion,
+                                                                            programa: Course.programa,
+                                                                            modalidad: Course.modalidad,
+                                                                            horario: Course.horario,
+                                                                            fecha_inicio: new Date(Course.fecha_inicio).toISOString().split('T')[0],
+                                                                            fecha_fin: new Date(Course.fecha_fin).toISOString().split('T')[0],
+                                                                            capacidad_maxima: Course.capacidad_maxima
+                                                                        }
+
+                                                                        setUpdateData(data)
+
+                                                                        setShowUpdateModal(true)
+                                                                    }
+
+                                                                }}><i className='bi bi-pencil-square'></i> Actualizar</button>
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-danger"
+                                                                    style={{ marginLeft: '10px' }}
+                                                                    onClick={() => {
+                                                                        if (Course.estado === 'activo') {
+                                                                            Modal_warning_delete()
+                                                                        } else {
+                                                                            handleDelete(Course.curso_id)
+                                                                        }
+                                                                    }}
+                                                                ><i className="bi bi-trash3"></i> Eliminar</button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            }
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div className="d-flex justify-content-center">
+                                    <ul className="pagination">
+
+                                        <li className={`page-item ${paginaActual === 1 ? 'disabled' : ''}`}>
+                                            <button className="page-link" onClick={anterior} disabled={paginaActual === 1}>
+                                                ← Anterior
+                                            </button>
+                                        </li>
+
+                                        {Array.from({ length: totalPaginas }, (_, index) => {
+                                            const numero = index + 1;
+                                            return (
+                                                <li
+                                                    key={numero}
+                                                    className={`page-item ${paginaActual === numero ? 'active' : ''}`}
+                                                >
+                                                    <button
+                                                        className="page-link"
+                                                        onClick={() => setPaginaActual(numero)}
+                                                    >
+                                                        {numero}
+                                                    </button>
+                                                </li>
+                                            );
+                                        })}
+
+                                        <li className={`page-item ${paginaActual === totalPaginas ? 'disabled' : ''}`}>
+                                            <button
+                                                className="page-link"
+                                                onClick={siguiente}
+                                                disabled={paginaActual === totalPaginas}
+                                            >
+                                                Siguiente →
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </>
                         ) : (
                             <NoData />
                         )

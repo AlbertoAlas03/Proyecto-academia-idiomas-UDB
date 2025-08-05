@@ -17,7 +17,7 @@ const Language = () => {
     const [idiomaID, setidiomaID] = useState('')
     const [isSearching, setisSearching] = useState(false)
 
-    const { list_idiomas, language, delete_idioma, search_idioma, search, setsearch, loading } = useLanguage()
+    const { list_idiomas, language, delete_idioma, search_idioma, search, setsearch, loading, paginaActual, setPaginaActual, totalPaginas } = useLanguage()
 
     const { token } = useAuth()
 
@@ -105,9 +105,21 @@ const Language = () => {
         setsearch(null)
     }
 
+    const siguiente = () => {
+        if (paginaActual < totalPaginas) {
+            setPaginaActual(paginaActual + 1)
+        }
+    }
+
+    const anterior = () => {
+        if (paginaActual > 1) {
+            setPaginaActual(paginaActual - 1)
+        }
+    }
+
     useEffect(() => {
         list_idiomas(token)
-    }, [])
+    }, [paginaActual])
 
     if (loading) {
         return (
@@ -206,51 +218,90 @@ const Language = () => {
                         </div>
                     ) : (
                         language.length > 0 ? (
-                            <div className="table-responsive">
-                                <table className="table table-striped table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">Nombre</th>
-                                            <th scope="col">Fecha registro</th>
-                                            <th scope="col">Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {
-                                            language.map((Language) => (
-                                                <tr key={Language.idioma_id}>
-                                                    <th scope="row">{Language.idioma_id}</th>
-                                                    <td>{Language.nombre}</td>
-                                                    <td>{new Date(Language.createdAt).toISOString().split('T')[0]}</td>
-                                                    <td>
-                                                        <div className="d-flex">
-                                                            <button type="button" className='btn btn-warning' onClick={() => {
-                                                                setShowUpdateModal(true)
+                            <>
+                                <div className="table-responsive">
+                                    <table className="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Fecha registro</th>
+                                                <th scope="col">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                language.map((Language) => (
+                                                    <tr key={Language.idioma_id}>
+                                                        <th scope="row">{Language.idioma_id}</th>
+                                                        <td>{Language.nombre}</td>
+                                                        <td>{new Date(Language.createdAt).toISOString().split('T')[0]}</td>
+                                                        <td>
+                                                            <div className="d-flex">
+                                                                <button type="button" className='btn btn-warning' onClick={() => {
+                                                                    setShowUpdateModal(true)
 
-                                                                const data = {
-                                                                    idioma_id: Language.idioma_id,
-                                                                    nombre: Language.nombre
-                                                                }
+                                                                    const data = {
+                                                                        idioma_id: Language.idioma_id,
+                                                                        nombre: Language.nombre
+                                                                    }
 
-                                                                setUpdateData(data)
+                                                                    setUpdateData(data)
 
-                                                            }}><i className='bi bi-pencil-square'></i> Actualizar</button>
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn-danger"
-                                                                style={{ marginLeft: '10px' }}
-                                                                onClick={() => handleDelete(Language.idioma_id)}
-                                                            ><i className="bi bi-trash3"></i> Eliminar</button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        }
+                                                                }}><i className='bi bi-pencil-square'></i> Actualizar</button>
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-danger"
+                                                                    style={{ marginLeft: '10px' }}
+                                                                    onClick={() => handleDelete(Language.idioma_id)}
+                                                                ><i className="bi bi-trash3"></i> Eliminar</button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            }
 
-                                    </tbody>
-                                </table>
-                            </div>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div className="d-flex justify-content-center">
+                                    <ul className="pagination">
+
+                                        <li className={`page-item ${paginaActual === 1 ? 'disabled' : ''}`}>
+                                            <button className="page-link" onClick={anterior} disabled={paginaActual === 1}>
+                                                ← Anterior
+                                            </button>
+                                        </li>
+
+                                        {Array.from({ length: totalPaginas }, (_, index) => {
+                                            const numero = index + 1;
+                                            return (
+                                                <li
+                                                    key={numero}
+                                                    className={`page-item ${paginaActual === numero ? 'active' : ''}`}
+                                                >
+                                                    <button
+                                                        className="page-link"
+                                                        onClick={() => setPaginaActual(numero)}
+                                                    >
+                                                        {numero}
+                                                    </button>
+                                                </li>
+                                            );
+                                        })}
+
+                                        <li className={`page-item ${paginaActual === totalPaginas ? 'disabled' : ''}`}>
+                                            <button
+                                                className="page-link"
+                                                onClick={siguiente}
+                                                disabled={paginaActual === totalPaginas}
+                                            >
+                                                Siguiente →
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </>
                         ) : (
                             <NoData />
                         )

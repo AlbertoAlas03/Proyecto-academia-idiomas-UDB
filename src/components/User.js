@@ -17,7 +17,19 @@ const User = () => {
     const [UserSelected, setUserSelected] = useState(null)
     const [userID, setuserID] = useState('')
 
-    const { list_user, usuarios, enable_user, disable_user, search_usuario, searchData, setsearchData, loading } = useUser()
+    const {
+        list_user,
+        usuarios,
+        enable_user,
+        disable_user,
+        search_usuario,
+        searchData,
+        setsearchData,
+        loading,
+        paginaActual,
+        totalPaginas,
+        setPaginaActual
+    } = useUser()
     const { token, user } = useAuth()
 
     const optionsUser = usuarios.map((u) => ({
@@ -144,9 +156,21 @@ const User = () => {
         setsearchData(null)
     }
 
+    const siguiente = () => {
+        if (paginaActual < totalPaginas) {
+            setPaginaActual(paginaActual + 1);
+        }
+    }
+
+    const anterior = () => {
+        if (paginaActual > 1) {
+            setPaginaActual(paginaActual - 1);
+        }
+    };
+
     useEffect(() => {
         list_user(token)
-    }, [])
+    }, [paginaActual])
 
     if (loading) {
         return (
@@ -270,81 +294,119 @@ const User = () => {
                         </div>
                     ) : (
                         usuarios.length > 0 ? (
-                            <div className="table-responsive">
-                                <table className="table table-striped table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">Nombre</th>
-                                            <th scope="col">Apellido</th>
-                                            <th scope="col">Email</th>
-                                            <th scope="col">Teléfono</th>
-                                            <th scope="col">Rol</th>
-                                            <th scope="col">Estado actual</th>
-                                            <th scope="col">Fecha registro</th>
-                                            <th scope="col">Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {
-                                            usuarios.map((usuario) => (
-                                                <tr key={usuario.usuario_id}>
-                                                    <th scope="row">{usuario.usuario_id}</th>
-                                                    <td>{usuario.nombre}</td>
-                                                    <td>{usuario.apellido}</td>
-                                                    <td>{usuario.email}</td>
-                                                    <td>{usuario.telefono}</td>
-                                                    <td>{usuario.rol}</td>
-                                                    <td className='text-center'>
-                                                        <span className={usuario.activo ? 'badge text-bg-success' : 'badge text-bg-danger'}>
-                                                            {usuario.activo ? 'Activo' : 'Inactivo'}
-                                                        </span>
-                                                    </td>
-                                                    <td>{new Date(usuario.fecha_registro).toISOString().split('T')[0]}</td>
-                                                    <td>
+                            <>
+                                <div className="table-responsive">
+                                    <table className="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Apellido</th>
+                                                <th scope="col">Email</th>
+                                                <th scope="col">Teléfono</th>
+                                                <th scope="col">Rol</th>
+                                                <th scope="col">Estado actual</th>
+                                                <th scope="col">Fecha registro</th>
+                                                <th scope="col">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                usuarios.map((usuario) => (
+                                                    <tr key={usuario.usuario_id}>
+                                                        <th scope="row">{usuario.usuario_id}</th>
+                                                        <td>{usuario.nombre}</td>
+                                                        <td>{usuario.apellido}</td>
+                                                        <td>{usuario.email}</td>
+                                                        <td>{usuario.telefono}</td>
+                                                        <td>{usuario.rol}</td>
+                                                        <td className='text-center'>
+                                                            <span className={usuario.activo ? 'badge text-bg-success' : 'badge text-bg-danger'}>
+                                                                {usuario.activo ? 'Activo' : 'Inactivo'}
+                                                            </span>
+                                                        </td>
+                                                        <td>{new Date(usuario.fecha_registro).toISOString().split('T')[0]}</td>
+                                                        <td>
 
-                                                        <div className="d-flex">
-                                                            <button disabled={user ? user.usuario_id === usuario.usuario_id : false} type="button" className={usuario.activo ? 'btn btn-danger' : 'btn btn-success'} onClick={() => {
-                                                                if (usuario.activo) {
-                                                                    Disable_user(usuario.usuario_id)
-                                                                } else {
-                                                                    Enable_user(usuario.usuario_id)
-                                                                }
-                                                            }}><i className={usuario.activo ? 'bi bi-x-square' : 'bi bi-check2-square'}></i> {usuario.activo ? 'Inhabilitar' : 'Habilitar'}</button>
-                                                            <button
-                                                                disabled={user ? user.usuario_id === usuario.usuario_id : false}
-                                                                type="button"
-                                                                className="btn btn-warning"
-                                                                style={{ marginLeft: '10px' }}
-                                                                onClick={() => {
-
-                                                                    const dataToupdate = {
-                                                                        usuario_id: usuario.usuario_id,
-                                                                        nombre: usuario.nombre,
-                                                                        apellido: usuario.apellido,
-                                                                        email: usuario.email,
-                                                                        telefono: usuario.telefono,
-                                                                        rol: usuario.rol
+                                                            <div className="d-flex">
+                                                                <button disabled={user ? user.usuario_id === usuario.usuario_id : false} type="button" className={usuario.activo ? 'btn btn-danger' : 'btn btn-success'} onClick={() => {
+                                                                    if (usuario.activo) {
+                                                                        Disable_user(usuario.usuario_id)
+                                                                    } else {
+                                                                        Enable_user(usuario.usuario_id)
                                                                     }
+                                                                }}><i className={usuario.activo ? 'bi bi-x-square' : 'bi bi-check2-square'}></i> {usuario.activo ? 'Inhabilitar' : 'Habilitar'}</button>
+                                                                <button
+                                                                    disabled={user ? user.usuario_id === usuario.usuario_id : false}
+                                                                    type="button"
+                                                                    className="btn btn-warning"
+                                                                    style={{ marginLeft: '10px' }}
+                                                                    onClick={() => {
 
-                                                                    setDataUpdate(dataToupdate)
-                                                                    setShowUpdateModal(true)
-                                                                }}
-                                                            ><i className="bi bi-pencil-square"></i> Actualizar</button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        }
+                                                                        const dataToupdate = {
+                                                                            usuario_id: usuario.usuario_id,
+                                                                            nombre: usuario.nombre,
+                                                                            apellido: usuario.apellido,
+                                                                            email: usuario.email,
+                                                                            telefono: usuario.telefono,
+                                                                            rol: usuario.rol
+                                                                        }
 
-                                    </tbody>
-                                </table>
-                            </div>
+                                                                        setDataUpdate(dataToupdate)
+                                                                        setShowUpdateModal(true)
+                                                                    }}
+                                                                ><i className="bi bi-pencil-square"></i> Actualizar</button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            }
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div className="d-flex justify-content-center">
+                                    <ul className="pagination">
+
+                                        <li className={`page-item ${paginaActual === 1 ? 'disabled' : ''}`}>
+                                            <button className="page-link" onClick={anterior} disabled={paginaActual === 1}>
+                                                ← Anterior
+                                            </button>
+                                        </li>
+
+                                        {Array.from({ length: totalPaginas }, (_, index) => {
+                                            const numero = index + 1;
+                                            return (
+                                                <li
+                                                    key={numero}
+                                                    className={`page-item ${paginaActual === numero ? 'active' : ''}`}
+                                                >
+                                                    <button
+                                                        className="page-link"
+                                                        onClick={() => setPaginaActual(numero)}
+                                                    >
+                                                        {numero}
+                                                    </button>
+                                                </li>
+                                            );
+                                        })}
+
+                                        <li className={`page-item ${paginaActual === totalPaginas ? 'disabled' : ''}`}>
+                                            <button
+                                                className="page-link"
+                                                onClick={siguiente}
+                                                disabled={paginaActual === totalPaginas}
+                                            >
+                                                Siguiente →
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </>
                         ) : (
                             <NoData />
                         )
                     )
-
                 }
             </div >
 

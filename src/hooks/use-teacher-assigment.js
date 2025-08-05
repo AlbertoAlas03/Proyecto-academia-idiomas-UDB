@@ -10,6 +10,9 @@ const useTeacherAssigment = () => {
     const [teacherAssigment, setTeacherAssigment] = useState([])
     const [searchData, setsearchData] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [paginaActual, setPaginaActual] = useState(1);
+    const [totalPaginas, setTotalPaginas] = useState(1);
+    const limite = 12;
 
     const {
         url_list_profesores_asignados,
@@ -31,7 +34,8 @@ const useTeacherAssigment = () => {
     const list_teacher_assigment = async (token) => {
 
         setLoading(true)
-        const response = await fetch(url_list_profesores_asignados, {
+
+        const response = await fetch(url_list_profesores_asignados + `?page=${paginaActual}&limit=${limite}`, {
             method: 'GET',
             headers: {
                 "Accept": "application/json",
@@ -89,6 +93,7 @@ const useTeacherAssigment = () => {
         const data = await response.json()
 
         setTeacherAssigment(data.data)
+        setTotalPaginas(data.totalPaginas)
         setLoading(false)
     }
 
@@ -430,7 +435,10 @@ const useTeacherAssigment = () => {
         search_assignment,
         searchData,
         setsearchData,
-        loading
+        loading,
+        paginaActual,
+        setPaginaActual,
+        totalPaginas
     }
 }
 

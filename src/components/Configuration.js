@@ -65,16 +65,35 @@ const Configuration = () => {
 
     }
 
-    const handleUpdateData = () => {
-        const data = {
-            usuario_id: user.usuario_id,
-            nombre: user.nombre,
-            apellido: user.apellido,
-            email: user.email
+    const handleUpdateData = async () => {
+
+        const modal = await Swal.fire({
+            title: '¿Estás seguro que quieres actualizar tu perfil?',
+            icon: 'warning',
+            showCancelButton: true,
+            showConfirmButton: true,
+            confirmButtonText: 'Aceptar',
+            cancelButtonText: 'Cancelar',
+            customClass: {
+                cancelButton: 'btn btn-danger',
+                confirmButton: 'btn btn-success'
+            },
+            allowEscapeKey: false,
+            allowOutsideClick: false
+        })
+
+        if (modal.isConfirmed) {
+            const data = {
+                usuario_id: user.usuario_id,
+                nombre: user.nombre,
+                apellido: user.apellido,
+                email: user.email
+            }
+
+            setData(data)
+            setshowUpdateModal(true)
         }
 
-        setData(data)
-        setshowUpdateModal(true)
     }
 
     return (

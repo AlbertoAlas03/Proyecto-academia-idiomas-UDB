@@ -9,6 +9,9 @@ const useUser = () => {
     const [usuarios, setUsuarios] = useState([])
     const [searchData, setsearchData] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [paginaActual, setPaginaActual] = useState(1);
+    const [totalPaginas, setTotalPaginas] = useState(1);
+    const limite = 12;
 
     const {
         url_list_user,
@@ -30,7 +33,7 @@ const useUser = () => {
 
         setLoading(true)
 
-        const response = await fetch(url_list_user, {
+        const response = await fetch(url_list_user + `?page=${paginaActual}&limit=${limite}`, {
             method: 'GET',
             headers: {
                 "Accept": "application/json",
@@ -88,6 +91,7 @@ const useUser = () => {
         const data = await response.json()
 
         setUsuarios(data.data)
+        setTotalPaginas(data.totalPaginas)
         setLoading(false)
     }
 
@@ -498,7 +502,10 @@ const useUser = () => {
         searchData,
         setsearchData,
         update_account,
-        loading
+        loading,
+        paginaActual,
+        totalPaginas,
+        setPaginaActual
     }
 }
 

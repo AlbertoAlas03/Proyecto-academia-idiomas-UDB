@@ -52,7 +52,9 @@ const ChangePasswordModal = ({ showModal, setShowModal, user, token }) => {
     }
 
     const handleCancelChange = async () => {
+
         setError(null)
+
         const modal_confirm = await Swal.fire({
             title: '¿Estas seguro de cancelar el cambio de contraseña?',
             icon: 'question',
@@ -69,6 +71,9 @@ const ChangePasswordModal = ({ showModal, setShowModal, user, token }) => {
         })
 
         if (modal_confirm.isConfirmed) {
+
+            setisProcessing(true)
+
             try {
 
                 const response = await cancel_change(token, user.email)
@@ -81,8 +86,9 @@ const ChangePasswordModal = ({ showModal, setShowModal, user, token }) => {
                         allowEscapeKey: false,
                         allowOutsideClick: false
                     })
-                    setShowModal(false)
                     clearForm()
+                    setisProcessing(false)
+                    setShowModal(false)
                 }
             } catch (error) {
 
