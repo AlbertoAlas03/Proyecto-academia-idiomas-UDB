@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import useCount from "../hooks/use-count"
-import { useAuth } from '../hooks/auth-context'
+import { useAuth } from '../hooks/context/auth-context'
 import { Container, Spinner } from "react-bootstrap"
 
 const Dashboard = () => {

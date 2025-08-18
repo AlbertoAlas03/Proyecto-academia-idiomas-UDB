@@ -1,5 +1,4 @@
 import Url from "../utils/url-data"
-import { useAuth } from "./auth-context"
 import useLogin from "./use-login"
 
 const useRefreshToken = () => {

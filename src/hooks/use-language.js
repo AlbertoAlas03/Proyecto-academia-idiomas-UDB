@@ -1,9 +1,9 @@
 import Url from "../utils/url-data"
 import useRefreshToken from "./use-refreshToken"
-import { useAuth } from "./auth-context"
+import { useAuth } from "./context/auth-context"
 import { useState } from "react"
 import useLogin from "./use-login"
-import { CallLanguage } from "./language-context"
+import { CallLanguage } from "./context/language-context"
 
 const useLanguage = () => {
 

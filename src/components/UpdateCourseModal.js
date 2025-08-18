@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Modal, Button, Form } from "react-bootstrap"
 import useCourse from "../hooks/use-course"
 import Swal from "sweetalert2"
-import { CallLanguage } from "../hooks/language-context"
+import { CallLanguage } from "../hooks/context/language-context"
 import Select from "react-select"
 import { useMemo } from "react"
 

@@ -1,9 +1,9 @@
 import { useState } from "react"
 import Url from "../utils/url-data"
 import useRefreshToken from "./use-refreshToken"
-import { useAuth } from "./auth-context"
+import { useAuth } from "./context/auth-context"
 import useLogin from "./use-login"
-import { CallCourseNotStarted } from "./course-not-started-context"
+import { CallCourseNotStarted } from "./context/course-not-started-context"
 
 const useCourse = () => {
 

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
 import useCourse from "../hooks/use-course"
-import { useAuth } from "../hooks/auth-context"
-import AddCourseModal from "./AddCourseModal"
-import NoData from './NoData'
+import { useAuth } from "../hooks/context/auth-context"
+import AddCourseModal from "../components/AddCourseModal"
+import NoData from '../components/NoData'
 import Swal from "sweetalert2"
-import UpdateCourseModal from "./UpdateCourseModal"
+import UpdateCourseModal from "../components/UpdateCourseModal"
 import Select from "react-select"
 import { Container, Spinner } from "react-bootstrap"
 

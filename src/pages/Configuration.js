@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { useAuth } from '../hooks/auth-context'
+import { useAuth } from '../hooks/context/auth-context'
 import useChangePassword from "../hooks/use-change-password";
 import Swal from "sweetalert2";
-import ChangePasswordModal from "./ChangePasswordModal";
-import UpdateDataUserModal from "./UpdateDataUserModal";
+import ChangePasswordModal from "../components/ChangePasswordModal";
+import UpdateDataUserModal from "../components/UpdateDataUserModal";
 
 const Configuration = () => {
 

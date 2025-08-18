@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
 import useCourse from '../hooks/use-course';
 import Swal from 'sweetalert2';
-import { CallLanguage } from '../hooks/language-context';
+import { CallLanguage } from '../hooks/context/language-context';
 import Select from "react-select"
 
 const AddCourseModal = ({ showModal, setShowModal, token, list_course, setcourseID, setCourseSelected, setisSearching, setcourseSearched }) => {

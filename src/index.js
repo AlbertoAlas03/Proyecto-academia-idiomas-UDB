@@ -6,10 +6,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import reportWebVitals from './reportWebVitals';
-import { AuthProvider } from './hooks/auth-context';
-import { LanguageProvider } from './hooks/language-context';
-import { TeacherProvider } from './hooks/teacher-context';
-import { CourseNotStartedProvider } from './hooks/course-not-started-context';
+import { AuthProvider } from './hooks/context/auth-context';
+import { LanguageProvider } from './hooks/context/language-context';
+import { TeacherProvider } from './hooks/context/teacher-context';
+import { CourseNotStartedProvider } from './hooks/context/course-not-started-context';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

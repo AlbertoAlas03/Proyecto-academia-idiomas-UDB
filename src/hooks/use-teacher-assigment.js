@@ -1,9 +1,9 @@
 import Url from "../utils/url-data"
 import useRefreshToken from "./use-refreshToken"
-import { useAuth } from "./auth-context"
+import { useAuth } from "./context/auth-context"
 import { useState } from "react"
 import useLogin from "./use-login"
-import { CallTeacher } from "./teacher-context"
+import { CallTeacher } from "./context/teacher-context"
 
 const useTeacherAssigment = () => {
 

@@ -1,10 +1,10 @@
 import { useState, useEffect, use } from "react";
 import useUser from "../hooks/use-user";
-import { useAuth } from '../hooks/auth-context'
-import AddUserModal from "./AddUserModal";
-import UpdateUserModal from "./UpdateUserModal";
+import { useAuth } from '../hooks/context/auth-context'
+import AddUserModal from "../components/AddUserModal";
+import UpdateUserModal from "../components/UpdateUserModal";
 import Swal from "sweetalert2";
-import NoData from "./NoData";
+import NoData from "../components/NoData";
 import { Container, Spinner } from "react-bootstrap";
 import Select from "react-select";
 

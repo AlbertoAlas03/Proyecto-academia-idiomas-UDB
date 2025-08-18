@@ -3,8 +3,8 @@ import { Button, Modal, Form } from 'react-bootstrap';
 import Select from 'react-select';
 import useTeacherAssigment from '../hooks/use-teacher-assigment';
 import Swal from 'sweetalert2';
-import { CallCourseNotStarted } from '../hooks/course-not-started-context';
-import { CallTeacher } from '../hooks/teacher-context';
+import { CallCourseNotStarted } from '../hooks/context/course-not-started-context';
+import { CallTeacher } from '../hooks/context/teacher-context';
 
 const UpdateAssignmentModal = ({
     showModal,

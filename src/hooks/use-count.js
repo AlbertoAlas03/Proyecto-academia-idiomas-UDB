@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import url from '../utils/url-data'
-import { useAuth } from '../hooks/auth-context'
+import { useAuth } from './context/auth-context'
 import useLogin from './use-login'
-import useRefreshToken from '../hooks/use-refreshToken'
+import useRefreshToken from './use-refreshToken'
 
 const useCount = () => {
 

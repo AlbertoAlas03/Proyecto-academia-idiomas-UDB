@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import logo from "../assets/img/logo.png"
 import useLogin from "../hooks/use-login";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/auth-context";
-import Footer from "./Footer"
+import { useAuth } from "../hooks/context/auth-context";
+import Footer from "../components/Footer"
 
 const Login = () => {
 
@@ -14,7 +14,7 @@ const Login = () => {
     const [password, setPassword] = useState('')
 
     const navigate = useNavigate()
-    const { token, user } = useAuth();
+    const { token } = useAuth();
 
     const { login } = useLogin()
 

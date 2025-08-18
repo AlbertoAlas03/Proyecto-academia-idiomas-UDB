@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import Footer from './Footer'
+import Footer from '../components/Footer'
 import Dashboard from './Dashboard';
 import User from './User';
 import Language from './Language';
 import useLogin from '../hooks/use-login';
 import Course from './Course';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/auth-context';
+import { useAuth } from '../hooks/context/auth-context';
 import Swal from 'sweetalert2';
 import TeacherAssigment from './TeacherAssigment';
 import Configuration from './Configuration';

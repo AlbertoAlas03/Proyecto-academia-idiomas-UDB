@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import useRefreshToken from '../hooks/use-refreshToken'
-import { useAuth } from '../hooks/auth-context'
+import useRefreshToken from './use-refreshToken'
+import { useAuth } from './context/auth-context'
 import url from '../utils/url-data'
-import useLogin from '../hooks/use-login'
+import useLogin from './use-login'
 
 const useUser = () => {
 
