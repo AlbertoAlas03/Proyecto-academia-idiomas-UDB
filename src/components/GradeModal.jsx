@@ -35,8 +35,9 @@ const GradeModal = ({ showModal, setShowModal, estudiante, token, list_notas }) 
 
         const data = {
             evaluacion_id: evaluacion_id,
-            estudiante_id: estudiante,
-            puntaje_obtenido: puntaje
+            estudiante_id: estudiante.estudiante_id,
+            puntaje_obtenido: puntaje,
+            email: estudiante.email
         }
 
         try {
@@ -54,7 +55,7 @@ const GradeModal = ({ showModal, setShowModal, estudiante, token, list_notas }) 
                 setisProcessing(false)
                 ClearForm()
                 setShowModal()
-                list_notas(token, estudiante)
+                list_notas(token, estudiante.estudiante_id)
             }
 
         } catch (error) {

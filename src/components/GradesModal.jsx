@@ -5,7 +5,7 @@ import notas_img from '../assets/img/plan-de-estudios.png'
 import { CallCourses } from "../hooks/contexts/course-context"
 import GradeModal from "./GradeModal"
 
-const GradesModal = ({ showModal, setShowModal, token, estudiante, nombre, apellido }) => {
+const GradesModal = ({ showModal, setShowModal, token, estudiante }) => {
 
     const [showGradeModal, setShowGradeModal] = useState(false)
 
@@ -14,7 +14,7 @@ const GradesModal = ({ showModal, setShowModal, token, estudiante, nombre, apell
     const { estado } = CallCourses()
 
     useEffect(() => {
-        list_notas(token, estudiante)
+        list_notas(token, estudiante.estudiante_id)
     }, [])
 
     return (
@@ -34,7 +34,7 @@ const GradesModal = ({ showModal, setShowModal, token, estudiante, nombre, apell
                 </Modal.Header>
                 <Modal.Body>
                     <Container>
-                        <h5 className="text-center mb-4"><i className="bi bi-person" style={{ fontSize: '30px' }}></i> Notas del estudiante: <strong>{nombre} {apellido}</strong></h5>
+                        <h5 className="text-center mb-4"><i className="bi bi-person" style={{ fontSize: '30px' }}></i> Notas del estudiante: <strong>{estudiante.name} {estudiante.last_name}</strong></h5>
                         <Container className="d-flex justify-content-between align-items-center">
                             <Button
                                 style={{ marginBottom: '20px' }}
@@ -43,7 +43,12 @@ const GradesModal = ({ showModal, setShowModal, token, estudiante, nombre, apell
                                 disabled={
                                     estado === 'finalizado' || estado === 'no iniciado'
                                 }><i className="bi bi-plus"></i> Agregar nota</Button>
-                            <div className="text-end" style={{ fontSize: '20px' }}>Nota final: <strong style={{ textDecoration: 'underline' }}>{nota_final}</strong></div>
+                            {
+                                notas.length !== 0 && (
+                                    <div className="text-end" style={{ fontSize: '20px' }}><span className={nota_final >= 6 ? 'badge text-bg-success' : 'badge text-bg-danger'}>{nota_final >= 6 ? 'Aprobado' : 'Reprobado'}</span> Nota final: <strong style={{ textDecoration: 'underline' }}>{nota_final}</strong></div>
+                                )
+                            }
+
                         </Container>
                         {
                             loading ? (

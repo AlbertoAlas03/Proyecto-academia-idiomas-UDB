@@ -10,9 +10,7 @@ import GradesModal from "../components/GradesModal"
 const Student = () => {
 
     const [showModal, setShowModal] = useState(false)
-    const [estudiante_id, setEstudiante_id] = useState('')
-    const [name, setName] = useState('')
-    const [lastName, setLastName] = useState('')
+    const [estudiante, setEstudiante] = useState(null)
 
     const { list_estudiantes, student, loading, paginaActual, setPaginaActual, totalPaginas } = useStudent()
     const { token } = useAuth()
@@ -35,6 +33,19 @@ const Student = () => {
         if (paginaActual > 1) {
             setPaginaActual(paginaActual - 1)
         }
+    }
+
+    const setDataStudent = (estudiante_id, name, last_name, email) => {
+
+        const data = {
+            estudiante_id: estudiante_id,
+            name: name,
+            last_name: last_name,
+            email: email
+        }
+
+        setEstudiante(data)
+        setShowModal(true)
     }
 
     if (loading) {
@@ -94,12 +105,9 @@ const Student = () => {
                                                     </td>
                                                     <td>
                                                         <Container className="text-center">
-                                                            <Button className="btn btn-success" onClick={() => {
-                                                                setEstudiante_id(Student.estudiante_id)
-                                                                setName(Student.estudiante.nombre)
-                                                                setLastName(Student.estudiante.apellido)
-                                                                setShowModal(true)
-                                                            }}><i className="bi bi-eye"></i></Button>
+                                                            <Button className="btn btn-success" onClick={() =>
+                                                                setDataStudent(Student.estudiante_id, Student.estudiante.nombre, Student.estudiante.apellido, Student.estudiante.email)
+                                                            }><i className="bi bi-eye"></i></Button>
                                                         </Container>
                                                     </td>
                                                 </tr>
@@ -159,7 +167,7 @@ const Student = () => {
             </Container >
             {
                 showModal && (
-                    <GradesModal showModal={showModal} setShowModal={() => setShowModal(false)} token={token} estudiante={estudiante_id} nombre={name} apellido={lastName} />
+                    <GradesModal showModal={showModal} setShowModal={() => setShowModal(false)} token={token} estudiante={estudiante} />
                 )
             }
 
