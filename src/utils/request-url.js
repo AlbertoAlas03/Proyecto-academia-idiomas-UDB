@@ -14,3 +14,4 @@ export const url_update_account = process.env.REACT_APP_BACKEND_URL + 'update_ac
 export const url_sendEmail = process.env.REACT_APP_BACKEND_URL + 'send_email'
 export const url_change_password = process.env.REACT_APP_BACKEND_URL + 'change_password'
 export const url_cancel_change = process.env.REACT_APP_BACKEND_URL + 'cancel_change'
+export const url_update_nota = process.env.REACT_APP_BACKEND_URL + 'update_nota_estudiante'

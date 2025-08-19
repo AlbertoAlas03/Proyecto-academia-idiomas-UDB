@@ -4,18 +4,34 @@ import { Container, Modal, Table, Button, Image, Spinner } from "react-bootstrap
 import notas_img from '../assets/img/plan-de-estudios.png'
 import { CallCourses } from "../hooks/contexts/course-context"
 import GradeModal from "./GradeModal"
+import UpdateGradeModal from "./UpdateGradeModal"
 
 const GradesModal = ({ showModal, setShowModal, token, estudiante }) => {
 
     const [showGradeModal, setShowGradeModal] = useState(false)
+    const [showUpdateGradeModal, setShowUpdateGradeModal] = useState(false)
+    const [updateData, setUpdateData] = useState(null)
 
-    const { list_notas, notas, loading, nota_final } = UseGrade()
+    const { list_notas, notas, loading, nota_final, update_nota } = UseGrade()
 
     const { estado } = CallCourses()
 
     useEffect(() => {
         list_notas(token, estudiante.estudiante_id)
     }, [])
+
+    const update_data = (nota_id, evaluacion_id, estudiante_id, puntaje_obtenido) => {
+
+        const data = {
+            nota_id: nota_id,
+            evaluacion_id: evaluacion_id,
+            estudiante_id: estudiante_id,
+            puntaje_obtenido: puntaje_obtenido
+        }
+
+        setUpdateData(data)
+        setShowUpdateGradeModal(true)
+    }
 
     return (
         <>
@@ -70,6 +86,7 @@ const GradesModal = ({ showModal, setShowModal, token, estudiante }) => {
                                                 <th>Porcentaje</th>
                                                 <th>Puntaje obtenido</th>
                                                 <th>Nota final</th>
+                                                <th>Acción</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -79,6 +96,13 @@ const GradesModal = ({ showModal, setShowModal, token, estudiante }) => {
                                                     <td>{(nota.evaluacion.porcentaje) * 100}%</td>
                                                     <td>{nota.puntaje_obtenido}</td>
                                                     <td>{nota.nota_final}</td>
+                                                    <td>
+                                                        <Container className="text-center">
+                                                            <Button className="btn btn-warning" onClick={() =>
+                                                                update_data(nota.nota_id, nota.evaluacion.evaluacion_id, nota.estudiante.usuario_id, nota.puntaje_obtenido)
+                                                            } disabled={estado === 'finalizado' || estado === 'no iniciado'}><i className="bi bi-pencil-square"></i> Actualizar</Button>
+                                                        </Container>
+                                                    </td>
                                                 </tr>
                                             ))}
                                         </tbody>
@@ -102,6 +126,11 @@ const GradesModal = ({ showModal, setShowModal, token, estudiante }) => {
             {
                 showGradeModal && (
                     <GradeModal showModal={showGradeModal} setShowModal={() => setShowGradeModal(false)} estudiante={estudiante} token={token} list_notas={list_notas} />
+                )
+            }
+            {
+                showUpdateGradeModal && (
+                    <UpdateGradeModal showModal={showUpdateGradeModal} setShowModal={() => setShowUpdateGradeModal(false)} updateData={updateData} token={token} list_notas={list_notas} />
                 )
             }
 
