@@ -41,7 +41,7 @@ const Course = () => {
             {
                 cursos.length > 0 ? (
                     <Container className="album py-3">
-                        <h3 className="h3"><i className="bi bi-journal-bookmark-fill"></i> Tus cursos asignados</h3>
+                        <h3 className="h3"><i className="bi bi-journal-bookmark-fill"></i> Mis cursos</h3>
                         <hr />
                         <Container className="container" style={{ marginTop: '40px' }}>
                             <Container className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
