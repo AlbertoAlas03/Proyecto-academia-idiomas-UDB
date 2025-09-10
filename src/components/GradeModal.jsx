@@ -4,6 +4,7 @@ import { useState } from "react"
 import Select from "react-select"
 import UseGrade from "../hooks/use-grade"
 import Swal from "sweetalert2"
+import { useParams } from "react-router-dom"
 
 const GradeModal = ({ showModal, setShowModal, estudiante, token, list_notas }) => {
 
@@ -12,6 +13,8 @@ const GradeModal = ({ showModal, setShowModal, estudiante, token, list_notas }) 
     const [puntaje, setPuntaje] = useState(0)
     const [AssessmentSelected, setAssessmentSelected] = useState(null)
     const [evaluacion_id, setEvaluacion_id] = useState('')
+
+    const { curso_id } = useParams()
 
     const { add_nota } = UseGrade()
 
@@ -36,6 +39,7 @@ const GradeModal = ({ showModal, setShowModal, estudiante, token, list_notas }) 
         const data = {
             evaluacion_id: evaluacion_id,
             estudiante_id: estudiante.estudiante_id,
+            curso_id: curso_id,
             puntaje_obtenido: puntaje,
             email: estudiante.email
         }

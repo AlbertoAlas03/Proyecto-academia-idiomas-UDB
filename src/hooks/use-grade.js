@@ -83,6 +83,7 @@ const UseGrade = () => {
         const RequestData = {
             evaluacion_id: Data.evaluacion_id,
             estudiante_id: Data.estudiante_id,
+            curso_id: Data.curso_id,
             puntaje_obtenido: Data.puntaje_obtenido,
             email: Data.email
         }
