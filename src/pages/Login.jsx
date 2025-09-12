@@ -1,9 +1,12 @@
 import { Container, Card, Image, Form, Button, InputGroup } from "react-bootstrap"
 import logo from '../assets/img/logo.png'
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import fondo from '../assets/img/background_login.jpg'
 import Footer from "../components/Footer"
+import useLogin from "../hooks/use-login"
+import { useNavigate } from "react-router-dom"
+import { useAuth } from "../hooks/context/auth-context"
 
 const Login = () => {
 
@@ -13,9 +16,52 @@ const Login = () => {
     const [password, setPassword] = useState('')
     const [seePassword, setSeePassword] = useState(false)
 
+    const { login } = useLogin()
+
+    const { token } = useAuth()
+
+    const navigate = useNavigate()
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        setError(null)
+        setLoading(true)
+
+        const data = {
+            email: email,
+            password: password
+        }
+
+        try {
+
+            const response = await login(data)
+
+            if (response) {
+                navigate('/home', { replace: true })
+                setLoading(false)
+                ClearForm()
+            }
+
+        } catch (error) {
+            setError(error.message || 'Hubo un error al inicar sesión')
+            setLoading(false)
+        }
+    }
+
     const handleSeePassword = () => {
         setSeePassword(!seePassword)
     }
+
+    const ClearForm = () => {
+        setEmail('')
+        setPassword('')
+    }
+
+    useEffect(() => {
+        if (token) {
+            navigate('/home', { replace: true })
+        }
+    }, [token, navigate])
 
     return (
         <>
@@ -51,7 +97,7 @@ const Login = () => {
                                     ))
 
                             }
-                            <Form onSubmit={{}}>
+                            <Form onSubmit={handleSubmit}>
                                 <fieldset disabled={loading}>
                                     <Form.Group className="mb-4">
                                         <Form.Label><i className="bi bi-envelope-at"></i> Correo eléctronico</Form.Label>

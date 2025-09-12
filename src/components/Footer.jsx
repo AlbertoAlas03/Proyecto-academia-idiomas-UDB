@@ -3,7 +3,7 @@ import logo from '../assets/img/logo.png'
 
 const Footer = () => {
     return (
-        <footer className="row row-cols-1 row-cols-sm-2 row-cols-md-5 py-5 my-5 border-top">
+        <footer className="row row-cols-1 row-cols-sm-2 row-cols-md-5 py-5 border-top">
             <Container className="col mb-3 text-center">
                 <Image src={logo} className="d-flex align-items-center mb-3 text-decoration-none" width='250px' height='100px' />
                 <p><strong>Copyright © 2025 - Academia de Idiomas UDB</strong></p>
