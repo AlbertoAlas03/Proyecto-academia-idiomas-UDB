@@ -56,10 +56,10 @@ const NavBar = ({ setshow }) => {
                 </Button>
                 <Navbar.Collapse className="justify-content-end">
                     <NavDropdown title={user ? `${user.nombre} ${user.apellido}` : ''} id="basic-nav-dropdown">
-                        <NavDropdown.Item as={Link} to="/home/myprofile">Mi perfil</NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/home/myprofile"><i className="bi bi-person"></i> Mi perfil</NavDropdown.Item>
                         <NavDropdown.Divider />
                         <NavDropdown.Item onClick={() => handleLogout()}>
-                            Cerrar sesión
+                            <i className="bi bi-box-arrow-left"></i> Cerrar sesión
                         </NavDropdown.Item>
                     </NavDropdown>
                 </Navbar.Collapse>

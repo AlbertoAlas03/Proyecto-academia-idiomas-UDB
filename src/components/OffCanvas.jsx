@@ -25,11 +25,11 @@ const OffCanvas = ({ show, setshow }) => {
                                         <i className="bi bi-mortarboard"></i> {programa} - {modalidad}
                                     </Nav.Link>
                                 </Nav.Item>
-                                {/* <Nav.Item>
-                    <Nav.Link as={Link} to={`/home/course/students/${curso_id}`}>
-                        <i className="bi bi-people"></i> Gestión de estudiantes
-                    </Nav.Link>
-                </Nav.Item> */}
+                                <Nav.Item>
+                                    <Nav.Link as={Link} to={`/home/course/students/${curso_id}`} style={{ padding: '4px 8px' }}>
+                                        <i className="bi bi-people"></i> Participantes
+                                    </Nav.Link>
+                                </Nav.Item>
                                 <hr style={{ margin: '4px 0' }} />
                             </>
                         )
@@ -38,6 +38,11 @@ const OffCanvas = ({ show, setshow }) => {
                     <Nav.Item style={{ marginBottom: '1px' }}>
                         <Nav.Link as={Link} to="/home" style={{ padding: '4px 8px' }}>
                             <i className="bi bi-house"></i> Inicio
+                        </Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item style={{ marginBottom: '1px' }}>
+                        <Nav.Link as={Link} to="/home/registration" style={{ padding: '0px 8px' }}>
+                            <i className="bi bi-journal-code"></i> Explorar cursos
                         </Nav.Link>
                     </Nav.Item>
                     <hr style={{ margin: '4px 0' }} />

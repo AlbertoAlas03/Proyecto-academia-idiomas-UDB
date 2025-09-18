@@ -37,7 +37,7 @@ const Grades = () => {
     }
 
     return (
-        <Container>
+        <Container style={{marginBottom: '50px'}}>
             <h3 className="mb-4 h3" style={{ marginTop: '20px' }}><i className="bi bi-person"></i> Mis calificaciones - {programa} - {modalidad}</h3>
             <hr />
             <Container className="d-flex justify-content-end my-3">

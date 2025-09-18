@@ -5,6 +5,8 @@ import Home from './pages/Home';
 import NotFound from './pages/NotFound'
 import Course from './pages/Course';
 import Grades from './pages/Grades';
+import Students from './pages/Students';
+import RegistrationCourse from './pages/Registration_course';
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
         <Route path='/home' element={<Home />}>
           <Route index element={<Course />} />
           <Route path='/home/course/grades/:curso_id' element={<Grades />} />
+          <Route path='/home/course/students/:curso_id' element={<Students />} />
+          <Route path='/home/registration' element={<RegistrationCourse />} />
         </Route>
         <Route path='*' element={<NotFound />} />
       </Routes>

@@ -62,7 +62,9 @@ const Course = () => {
                                                     <Card.Text className="mb-3">
                                                         <strong>Programa:</strong> {Curso.curso.programa}
                                                     </Card.Text>
-
+                                                    <Card.Text className="mb-2">
+                                                        <span className={Curso.curso.estado === 'activo' ? 'badge text-bg-success' : 'badge text-bg-warning'} style={{ fontSize: '15px' }}> {Curso.curso.estado}</span>
+                                                    </Card.Text>
                                                     <div className="d-flex justify-content-end">
                                                         <Button variant="primary" className="rounded-pill" as={Link} to={`/home/course/grades/${Curso.curso_id}`} onClick={() => {
                                                             setNombre(Curso.curso.nombre)
