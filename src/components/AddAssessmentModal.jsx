@@ -67,7 +67,7 @@ const AddAssessmentModal = ({ showModal, setShowModal, list_evaluaciones, token 
                 keyboard={false}
             >
                 <Modal.Header closeButton>
-                    <Modal.Title><i className="bi bi-journal-plus"></i> Crear evaluacioón</Modal.Title>
+                    <Modal.Title><i className="bi bi-journal-plus"></i> Crear evaluación</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={handleSubmit}>
