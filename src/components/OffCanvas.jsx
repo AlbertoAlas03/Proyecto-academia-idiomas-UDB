@@ -45,6 +45,11 @@ const OffCanvas = ({ show, setshow }) => {
                             <i className="bi bi-journal-code"></i> Explorar cursos
                         </Nav.Link>
                     </Nav.Item>
+                    <Nav.Item style={{ marginBottom: '1px' }}>
+                        <Nav.Link as={Link} to="/home/myschedule" style={{ padding: '0px 8px' }}>
+                            <i className="bi bi-calendar"></i> Mi horario
+                        </Nav.Link>
+                    </Nav.Item>
                     <hr style={{ margin: '4px 0' }} />
 
                     <Nav.Item style={{ marginBottom: '0px' }}>

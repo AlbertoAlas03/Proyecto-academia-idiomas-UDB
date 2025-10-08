@@ -133,7 +133,7 @@ const Login = () => {
                                     </Form.Group>
                                     <Container>
                                         <i className="bi bi-key"></i>
-                                        <Link to='/prueba'>¿Olvidó su contraseña?</Link>
+                                        <Link to='/changepassword'>¿Olvidó su contraseña?</Link>
                                     </Container>
                                     <hr />
                                     <Button className="btn btn-primary w-100" type="submit">Iniciar sesión</Button>
