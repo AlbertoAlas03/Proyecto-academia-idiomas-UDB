@@ -29,6 +29,16 @@ const nota = sequelize.define('notas', {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
     },
+    curso_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'cursos',
+            key: 'curso_id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
+    },
     puntaje_obtenido: {
         type: DataTypes.DECIMAL(5, 2),
         allowNull: false

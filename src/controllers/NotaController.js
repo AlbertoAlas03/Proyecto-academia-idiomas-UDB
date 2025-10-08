@@ -2,6 +2,10 @@ import nota from "../models/nota.js"
 import evaluacion from "../models/evaluacion.js"
 import usuario from "../models/usuario.js"
 import { Op } from "sequelize"
+import Transporter from "../emails/configuration-email.js"
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 export const list_notas_estudiante = async (req, res, next) => {
     try {
@@ -18,22 +22,27 @@ export const list_notas_estudiante = async (req, res, next) => {
             where: {
                 estudiante_id: estudiante_id
             },
+            attributes: ['nota_id', 'evaluacion_id', 'estudiante_id', 'puntaje_obtenido', 'nota_final'],
             include: [{
                 model: evaluacion,
                 as: 'evaluacion',
                 attributes: ['evaluacion_id', 'nombre', 'descripcion', 'porcentaje']
+            }, {
+                model: usuario,
+                as: 'estudiante'
             }]
         })
 
-        if (notas.length === 0) {
-            return res.status(404).json({
-                message: 'No existen notas registradas para este estudiante'
-            })
-        }
+        const nota_final = await nota.sum('nota_final', {
+            where: {
+                estudiante_id: estudiante_id
+            }
+        })
 
         return res.status(200).json({
             message: 'Notas del estudiante',
-            data: notas
+            data: notas,
+            nota_final: nota_final
         })
 
     } catch (error) {
@@ -50,9 +59,9 @@ export const list_notas_estudiante = async (req, res, next) => {
 export const add_nota = async (req, res, next) => {
     try {
 
-        const { evaluacion_id, estudiante_id, puntaje_obtenido } = req.body
+        const { evaluacion_id, estudiante_id, curso_id, puntaje_obtenido, email } = req.body
 
-        if (!evaluacion_id || !estudiante_id || !puntaje_obtenido) {
+        if (!evaluacion_id || !estudiante_id || !curso_id || !puntaje_obtenido || !email) {
             return res.status(400).json({
                 message: 'Faltan campos obligatorios, por favor verifique'
             })
@@ -76,7 +85,8 @@ export const add_nota = async (req, res, next) => {
 
         const estudiante = await usuario.findOne({
             where: {
-                usuario_id: estudiante_id
+                usuario_id: estudiante_id,
+                email: email
             }
         })
 
@@ -95,15 +105,25 @@ export const add_nota = async (req, res, next) => {
 
         if (exists_evaluacion_registrada) {
             return res.status(400).json({
-                message: 'Esta evaluacion ya esta registrada con su respectiva nota para este estudiante, por favor verifique'
+                message: 'Esta evaluacion ya esta registrada, por favor verifique'
             })
         }
 
-        const nota_final = parseFloat((Evaluacion.porcentaje * puntaje_obtenido).toFixed(2));
+        const nota_final = (Evaluacion.porcentaje * puntaje_obtenido).toFixed(2);
+
+        const mailOptions = {
+            from: process.env.EMAIL,
+            to: email,
+            subject: `Notificación sobre nota de la evaluación ${Evaluacion.nombre}`,
+            html: `<h1>Buen día estimado estudiante <strong>${estudiante.nombre} ${estudiante.apellido}</strong>,</h1><p> notificarte que tu nota respecto a esta evaluación ya esta publicada en el portal estudiantil, saludos.</p>`
+        }
+
+        await Transporter.sendMail(mailOptions)
 
         await nota.create({
             evaluacion_id: evaluacion_id,
             estudiante_id: estudiante_id,
+            curso_id: curso_id,
             puntaje_obtenido: puntaje_obtenido,
             nota_final: nota_final
         })
@@ -195,54 +215,45 @@ export const update_nota = async (req, res, next) => {
     }
 }
 
-export const calculo_nota_final = async (req, res, next) => {
+export const get_nota_estudiante = async (req, res, next) => {
     try {
 
-        const { estudiante_id } = req.body
+        const { curso_id } = req.body
+        const estudiante_id = req.usuario.usuario_id
 
-        if (!estudiante_id) {
+        if (!estudiante_id || !curso_id) {
             return res.status(400).json({
-                message: 'El id del estudiante es obligatorio'
+                message: 'El id del estudiante y curso son obligatorios'
             })
         }
 
-        const notas_estudiante = await nota.findAll({
+        const notas = await nota.findAll({
             where: {
-                estudiante_id: estudiante_id
-            }
+                estudiante_id: estudiante_id,
+                curso_id: curso_id
+            },
+            include: [{
+                model: evaluacion,
+                as: 'evaluacion'
+            }]
         })
 
-        if (notas_estudiante.length === 0) {
-            return res.status(404).json({
-                message: 'No existen notas registradas para este estudiante, por favor verifique'
-            })
-        }
-
-        const total_notas = await nota.count({
+        const nota_final = await nota.sum('nota_final', {
             where: {
-                estudiante_id: estudiante_id
+                estudiante_id: estudiante_id,
+                curso_id: curso_id
             }
         })
-
-        const suma_notas = await nota.sum('nota_final', {
-            where: {
-                estudiante_id: estudiante_id
-            }
-        })
-
-        const nota_final = parseFloat((suma_notas / total_notas).toFixed(2))
 
         return res.status(200).json({
-            message: 'Nota final del estudiante',
-            data: nota_final
+            message: 'Tus notas',
+            data: notas,
+            nota_final: nota_final
         })
 
     } catch (error) {
-
-        console.log('Error al calcular la nota final del estudiante: ', error.message)
-
         return res.status(500).json({
-            message: 'Error al calcular la nota final del estudiante',
+            message: 'Error al obtener las notas',
             error: error.message
         })
     }

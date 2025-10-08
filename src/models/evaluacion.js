@@ -43,7 +43,7 @@ const evaluacion = sequelize.define('evaluaciones', {
         defaultValue: DataTypes.NOW
     },
     porcentaje: {
-        type: DataTypes.DECIMAL(5,2),
+        type: DataTypes.DECIMAL(7,4),
         allowNull: false
     }
 }, {

@@ -10,23 +10,31 @@ const refreshToken = async (req, res, next) => {
         const refreshToken = req.cookies.refreshToken
 
         if (!refreshToken) {
+
             return res.status(401).json({
-                message: 'No se ha proporcionado un token de refresco'
+                message: 'Su sesión a expirado por completo, por favor, vuelva a iniciar sesión'
             })
         }
 
         jwt.verify(refreshToken, process.env.REFRESH_SECRET, (error, usuario) => {
 
             if (error) {
+
+                res.clearCookie('refreshToken', {
+                    httpOnly: true,
+                    sameSite: 'strict',
+                    secure: false,
+                });
+
                 return res.status(403).json({
-                    message: 'Token de refresco invalido o expirado'
+                    message: 'Su sesión ha caducado, por favor, vuelve a iniciar sesión'
                 })
             }
 
             const newAccessToken = generateToken(usuario);
 
             return res.status(200).json({
-                message: 'Token de acceso actualizado correctamente',
+                message: 'Sesión extendida con exito!',
                 token_nuevo: newAccessToken.accessToken
             });
         });

@@ -5,22 +5,28 @@ import idioma from "../models/idioma.js"
 export const list_cursos = async (req, res, next) => {
     try {
 
-        const Cursos = await curso.findAll({
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 12;
+        const offset = (page - 1) * limit;
+
+        const { count, rows } = await curso.findAndCountAll({
             include: [{
                 model: idioma,
                 as: 'idioma'
-            }]
+            }],
+            limit,
+            offset,
+            order: [['curso_id', 'ASC']]
         })
 
-        if (Cursos.length === 0) {
-            return res.status(404).json({
-                message: 'No existen cursos registados'
-            })
-        }
+        const totalPaginas = Math.ceil(count / limit);
 
         return res.status(200).json({
             message: 'Cursos registrados',
-            data: Cursos
+            paginaActual: page,
+            totalPaginas: totalPaginas,
+            totalRegistros: count,
+            data: rows
         })
 
     } catch (error) {
@@ -55,6 +61,8 @@ export const create_curso = async (req, res, next) => {
             })
         }
 
+        const today = new Date().toLocaleDateString('sv-SE')
+
         const Idioma = await idioma.findOne({
             where: {
                 idioma_id: idioma_id
@@ -76,6 +84,30 @@ export const create_curso = async (req, res, next) => {
         if (exists_curso) {
             return res.status(400).json({
                 message: 'Ya existe un curso con este nombre'
+            })
+        }
+
+        if (fecha_inicio <= today) {
+            return res.status(400).json({
+                message: 'La fecha de inicio debe ser posterior a la fecha actual'
+            });
+        }
+
+        if (fecha_fin <= today) {
+            return res.status(400).json({
+                message: 'La fecha de fin debe ser posterior a la fecha actual'
+            });
+        }
+
+        if (fecha_inicio >= fecha_fin) {
+            return res.status(400).json({
+                message: 'La fecha de fin debe ser posterior a la fecha de inicio'
+            });
+        }
+
+        if (capacidad_maxima <= 0) {
+            return res.status(400).json({
+                message: 'Dato no válido en cupos, por favor verifique'
             })
         }
 
@@ -128,6 +160,8 @@ export const update_curso = async (req, res, next) => {
             })
         }
 
+        const today = new Date().toLocaleDateString('sv-SE')
+
         const Curso = await curso.findOne({
             where: {
                 curso_id: curso_id
@@ -162,6 +196,31 @@ export const update_curso = async (req, res, next) => {
         if (exists_curso) {
             return res.status(400).json({
                 message: 'Ya existe un curso con este nombre'
+            })
+        }
+
+
+        if (fecha_inicio <= today) {
+            return res.status(400).json({
+                message: 'La fecha de inicio debe ser posterior a la fecha actual'
+            });
+        }
+
+        if (fecha_fin <= today) {
+            return res.status(400).json({
+                message: 'La fecha de fin debe ser posterior a la fecha actual'
+            });
+        }
+
+        if (fecha_inicio >= fecha_fin) {
+            return res.status(400).json({
+                message: 'La fecha de fin debe ser posterior a la fecha de inicio'
+            });
+        }
+
+        if (capacidad_maxima <= 0) {
+            return res.status(400).json({
+                message: 'Dato no válido en cupos, por favor verifique'
             })
         }
 
@@ -226,6 +285,101 @@ export const delete_curso = async (req, res, next) => {
 
         return res.status(500).json({
             message: 'Error al eliminar el curso',
+            error: error.message
+        })
+    }
+}
+
+export const list_cursos_no_iniciados = async (req, res, next) => {
+    try {
+
+        const cursos = await curso.findAll({
+            where: {
+                estado: 'no iniciado'
+            },
+            attributes: ['curso_id', 'nombre', 'programa', 'modalidad']
+        })
+
+        return res.status(200).json({
+            message: 'Cursos no iniciados',
+            data: cursos
+        })
+
+    } catch (error) {
+
+        console.log('Error al listar todos los cursos no iniciados: ', error.message)
+
+        return res.status(500).json({
+            message: 'Error al listar todos los cursos no iniciados',
+            error: error.message
+        })
+    }
+}
+
+export const list_course_by_id = async (req, res, next) => {
+    try {
+
+        const { curso_id } = req.body
+
+        if (!curso_id) {
+            return res.status(400).json({
+                message: 'Debe seleccionar un curso o buscarlo por su codigo, por favor verifique'
+            })
+        }
+
+        const Curso = await curso.findOne({
+            where: {
+                curso_id: curso_id
+            },
+            include: [{
+                model: idioma,
+                as: 'idioma'
+            }]
+        })
+
+        if (!Curso) {
+            return res.status(404).json({
+                message: 'Curso no registrado, por favor verifique'
+            })
+        }
+
+        return res.status(200).json({
+            message: 'Curso encontrado!',
+            data: Curso
+        })
+
+    } catch (error) {
+
+        console.log('Error al buscar el curso por su id: ', error.message)
+
+        return res.status(500).json({
+            message: 'Error al buscar el curso por su id',
+            error: error.message
+        })
+    }
+}
+
+export const list_more_courses_not_started = async (req, res, next) => {
+    try {
+
+        const cursos = await curso.findAll({
+            where: {
+                estado: 'no iniciado'
+            },
+            attributes: ['curso_id', 'nombre', 'programa', 'modalidad', 'horario', 'fecha_inicio', 'fecha_fin', 'capacidad_maxima']
+        })
+
+        return res.status(200).json({
+            message: 'Cursos no iniciados',
+            data: cursos
+        })
+
+    } catch (error) {
+
+        console.log('Error al listar todos los cursos no iniciados: ', error.message)
+
+        return res.status(500).json({
+            message: 'Error al listar todos los cursos no iniciados',
             error: error.message
         })
     }

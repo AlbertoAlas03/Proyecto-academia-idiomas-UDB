@@ -20,13 +20,7 @@ const usuario = sequelize.define('usuarios', {
     email: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
-        validate: {
-            isEmail: {
-                args: true,
-                msg: "Formato de email no válido"
-            }
-        }
+        unique: true
     },
     password: {
         type: DataTypes.STRING,
@@ -34,13 +28,7 @@ const usuario = sequelize.define('usuarios', {
     },
     telefono: {
         type: DataTypes.STRING,
-        allowNull: true,
-        validate: {
-            is: {
-                args: /^(2|6|7)\d{7}$|^(2|6|7)\d{3}-\d{4}$/,
-                msg: "Formato de telefono no válido"
-            }
-        }
+        allowNull: true
     },
     rol: {
         type: DataTypes.ENUM('estudiante', 'profesor', 'administrador'),

@@ -5,6 +5,8 @@ import Evaluacion from '../models/evaluacion.js';
 import Inscripcion from '../models/inscripcion.js'
 import Nota from '../models/nota.js';
 import ProfesorCurso from '../models/profesor_curso.js';
+import sesion from './sesion.js';
+import usuario from '../models/usuario.js';
 
 const iniciar_relaciones = () => {
 
@@ -56,6 +58,11 @@ const iniciar_relaciones = () => {
         as: 'evaluaciones'
     });
 
+    Curso.hasMany(Nota, {
+        foreignKey: 'curso_id',
+        as: 'notas'
+    })
+
     // Relaciones de Matricula
     Inscripcion.belongsTo(Usuario, {
         foreignKey: 'estudiante_id',
@@ -104,6 +111,12 @@ const iniciar_relaciones = () => {
         foreignKey: 'estudiante_id',
         as: 'estudiante'
     });
+
+    //relaciones de sesion
+    sesion.belongsTo(usuario, {
+        foreignKey: 'usuario_id',
+        as: 'usuario'
+    })
 }
 
 export default iniciar_relaciones

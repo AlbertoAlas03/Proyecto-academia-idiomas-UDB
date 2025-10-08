@@ -20,16 +20,18 @@ export const list_evaluacion_curso = async (req, res, next) => {
             }
         })
 
-        if (evaluaciones.length === 0) {
-            return res.status(404).json({
-                message: 'No existen evaluaciones para este curso'
-            })
-        }
+        const total_porcentaje = await evaluacion.sum('porcentaje', {
+            where: {
+                curso_id: curso_id
+            }
+        })
 
         return res.status(200).json({
             message: 'Evaluaciones del curso',
-            data: evaluaciones
+            data: evaluaciones,
+            total_porcentaje: total_porcentaje * 100
         })
+
     } catch (error) {
 
         console.log('Error al listar las evaluaciones del curso: ', error.message)
@@ -47,19 +49,17 @@ export const create_evaluacion = async (req, res, next) => {
         const { curso_id, nombre, descripcion, porcentaje } = req.body
 
         const profesor_id = req.usuario.usuario_id
-        
+
         if (!curso_id || !profesor_id || !nombre || !descripcion || !porcentaje) {
 
             return res.status(400).json({
                 message: 'Faltan campos obligatorios, por favor verifique'
             })
-        } else if (porcentaje <= 0) {
+        } else if (porcentaje <= 0 || porcentaje > 100) {
             return res.status(400).json({
                 message: 'Hay un error con el porcentaje, por favor verifique'
             })
         }
-
-        const Porcentaje = (parseFloat(porcentaje)) / 100
 
         const Curso = await curso.findOne({
             where: {
@@ -97,6 +97,20 @@ export const create_evaluacion = async (req, res, next) => {
             })
         }
 
+        const porcentaje_evaluacion = await evaluacion.sum('porcentaje', {
+            where: {
+                curso_id: curso_id
+            }
+        })
+
+        const Porcentaje = (porcentaje) / 100
+
+        if ((porcentaje_evaluacion + Porcentaje) > 1) {
+            return res.status(400).json({
+                message: 'El porcentaje total de las evaluaciones no puede superar el 100%'
+            })
+        }
+
         await evaluacion.create({
             curso_id: curso_id,
             profesor_id: profesor_id,
@@ -123,20 +137,18 @@ export const create_evaluacion = async (req, res, next) => {
 export const update_evaluacion = async (req, res, next) => {
     try {
 
-        const { evaluacion_id, nombre, descripcion, porcentaje } = req.body
+        const { curso_id, evaluacion_id, nombre, descripcion, porcentaje } = req.body
 
-        if (!evaluacion_id || !nombre || !descripcion || !porcentaje) {
+        if (!curso_id || !evaluacion_id || !nombre || !descripcion || !porcentaje) {
 
             return res.status(400).json({
                 message: 'Faltan campos obligatorios, por favor verifique'
             })
-        } else if (porcentaje <= 0) {
+        } else if (porcentaje <= 0 || porcentaje > 100) {
             return res.status(400).json({
                 message: 'Hay un error con el porcentaje, por favor verifique'
             })
         }
-
-        const Porcentaje = (parseFloat(porcentaje)) / 100
 
         const Evaluacion = await evaluacion.findOne({
             where: {
@@ -160,6 +172,21 @@ export const update_evaluacion = async (req, res, next) => {
         if (exists_evaluacion) {
             return res.status(400).json({
                 message: 'Ya existe una evaluacion con este nombre, por favor verifique'
+            })
+        }
+
+        const porcentaje_evaluacion = await evaluacion.sum('porcentaje', {
+            where: {
+                curso_id: curso_id,
+                evaluacion_id: { [Op.ne]: evaluacion_id }
+            }
+        })
+
+        const Porcentaje = (porcentaje) / 100
+
+        if ((porcentaje_evaluacion + Porcentaje) > 1) {
+            return res.status(400).json({
+                message: 'El porcentaje total de las evaluaciones no puede superar el 100%'
             })
         }
 

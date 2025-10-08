@@ -17,7 +17,7 @@ const authenticate = (req, res, next) => {
     jwt.verify(token, process.env.JWT_SECRET, (error, usuario) => {
         if (error) {
             return res.status(403).json({
-                message: 'Token inválido o expirado, acceso denegado'
+                message_about_token: 'Token inválido o expirado, acceso denegado'
             });
         }
         req.usuario = usuario;

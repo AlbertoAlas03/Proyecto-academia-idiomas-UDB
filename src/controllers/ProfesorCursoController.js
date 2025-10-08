@@ -3,35 +3,52 @@ import usuario from "../models/usuario.js"
 import curso from "../models/curso.js"
 import { Op } from "sequelize"
 import idioma from "../models/idioma.js"
+import { sequelize } from "../database/db_connection.js"
 
 export const list_profesores_cursos = async (req, res, next) => {
     try {
 
-        const profesores = await profesor_curso.findAll({
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 12;
+        const offset = (page - 1) * limit;
+
+
+        const { count, rows } = await profesor_curso.findAndCountAll({
             include: [{
                 model: curso,
                 as: 'curso',
+                attributes: [
+                    'curso_id',
+                    'nombre',
+                    'programa',
+                    'modalidad',
+                    'horario',
+                    'estado',
+                    [sequelize.literal('(SELECT COUNT(*) FROM inscripciones WHERE inscripciones.curso_id = curso.curso_id)'), 'total_inscripciones']
+                ],
                 include: [{
                     model: idioma,
-                    as: 'idioma'
-                }],
-                attributes: ['curso_id', 'idioma_id', 'nombre', 'descripcion', 'programa', 'modalidad', 'horario', 'activo']
+                    as: 'idioma',
+                    attributes: ['idioma_id', 'nombre']
+                }]
             }, {
                 model: usuario,
                 as: 'profesor',
                 attributes: ['usuario_id', 'nombre', 'apellido', 'email']
-            }]
+            }],
+            limit,
+            offset,
+            order: [['asignacion_id', 'ASC']]
         })
 
-        if (profesores.length === 0) {
-            return res.status(404).json({
-                message: 'No existen profesores asignados a cursos'
-            })
-        }
+        const totalPaginas = Math.ceil(count / limit);
 
         return res.status(200).json({
             message: 'Profesores asignados a cursos',
-            data: profesores
+            paginaActual: page,
+            totalPaginas: totalPaginas,
+            totalRegistros: count,
+            data: rows
         })
 
     } catch (error) {
@@ -48,11 +65,11 @@ export const list_profesores_cursos = async (req, res, next) => {
 export const asignar_profesor_curso = async (req, res, next) => {
     try {
 
-        const { curso_id, profesor_id, aula } = req.body
+        const { curso_id, profesor_id } = req.body
 
-        if (!profesor_id || !curso_id || !aula) {
+        if (!profesor_id || !curso_id) {
             return res.status(400).json({
-                message: 'El id del profesor y del curso es obligatorio, por favor verifique'
+                message: 'Debes seleccionar un profesor y un curso o buscarlos por su codigo, por favor verifique'
             })
         }
 
@@ -101,6 +118,7 @@ export const asignar_profesor_curso = async (req, res, next) => {
         return res.status(200).json({
             message: 'Profesor asignado al curso con exito!'
         })
+
     } catch (error) {
 
         console.log('Error al asignar el curso al profesor: ', error.message)
@@ -119,7 +137,7 @@ export const update_profesor_curso = async (req, res, next) => {
 
         if (!asignacion_id || !profesor_id || !curso_id) {
             return res.status(400).json({
-                message: 'Faltan campos obligatorios, por favor verifique'
+                message: 'Debe seleccionar un profesor y un curso o buscarlos por su codigo, por favor verifique'
             })
         }
 
@@ -181,6 +199,7 @@ export const update_profesor_curso = async (req, res, next) => {
         return res.status(200).json({
             message: 'Asignacion actualizada con exito!'
         })
+
     } catch (error) {
 
         console.log('Error al actualizar el profesor con curso asignado: ', error.message)
@@ -235,7 +254,7 @@ export const delete_profesor_curso = async (req, res, next) => {
 //funcion para usuario profesor
 export const list_profesor_curso = async (req, res, next) => {
     try {
-        
+
         const profesor_id = req.usuario.usuario_id
 
         if (!profesor_id) {
@@ -253,17 +272,12 @@ export const list_profesor_curso = async (req, res, next) => {
                 as: 'curso',
                 include: [{
                     model: idioma,
-                    as: 'idioma'
+                    as: 'idioma',
+                    attributes: ['idioma_id', 'nombre']
                 }],
-                attributes: ['curso_id', 'idioma_id', 'nombre', 'descripcion', 'programa', 'modalidad', 'horario', 'activo']
+                attributes: ['curso_id', 'idioma_id', 'nombre', 'descripcion', 'programa', 'modalidad', 'horario', 'estado']
             }]
         })
-
-        if (Cursos.length === 0) {
-            return res.status(404).json({
-                message: 'No tienes cursos asignados!'
-            })
-        }
 
         return res.status(200).json({
             message: 'Tus cursos asignados',
@@ -280,3 +294,63 @@ export const list_profesor_curso = async (req, res, next) => {
     }
 }
 
+export const list_assignment_by_id = async (req, res, next) => {
+    try {
+
+        const { asignacion_id } = req.body
+
+        if (!asignacion_id) {
+            return res.status(400).json({
+                message: 'Debe seleccionar una asignación o buscarlo por su codigo, por favor verifique'
+            })
+        }
+
+        const Asignacion = await profesor_curso.findOne({
+            where: {
+                asignacion_id: asignacion_id
+            },
+            include: [{
+                model: curso,
+                as: 'curso',
+                attributes: [
+                    'curso_id',
+                    'nombre',
+                    'programa',
+                    'modalidad',
+                    'horario',
+                    'estado',
+                    [sequelize.literal('(SELECT COUNT(*) FROM inscripciones WHERE inscripciones.curso_id = curso.curso_id)'), 'total_inscripciones']
+                ],
+                include: [{
+                    model: idioma,
+                    as: 'idioma',
+                    attributes: ['idioma_id', 'nombre']
+                }]
+            }, {
+                model: usuario,
+                as: 'profesor',
+                attributes: ['usuario_id', 'nombre', 'apellido', 'email']
+            }]
+        })
+
+        if (!Asignacion) {
+            return res.status(404).json({
+                message: 'Esta asignación no esta registrada, por favor verifique'
+            })
+        }
+
+        return res.status(200).json({
+            message: 'Asignacion encontrada!',
+            data: Asignacion
+        })
+
+    } catch (error) {
+
+        console.log('Error al buscar la asignación por ID: ', error.message)
+
+        return res.status(500).json({
+            message: 'Error al buscar la asignación por ID',
+            error: error.message
+        })
+    }
+}
