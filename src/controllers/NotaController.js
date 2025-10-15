@@ -154,6 +154,12 @@ export const update_nota = async (req, res, next) => {
             })
         }
 
+        const estudiante = await usuario.findOne({
+            where: {
+                usuario_id: estudiante_id
+            }
+        })
+
         const Nota = await nota.findOne({
             where: {
                 nota_id: nota_id
@@ -193,6 +199,15 @@ export const update_nota = async (req, res, next) => {
         }
 
         const nota_final = parseFloat((Evaluacion.porcentaje * puntaje_obtenido).toFixed(2));
+
+        const mailOptions = {
+            from: process.env.EMAIL,
+            to: estudiante.email,
+            subject: `Notificación sobre nota de la evaluación ${Evaluacion.nombre}`,
+            html: `<h1>Buen día estimado estudiante <strong>${estudiante.nombre} ${estudiante.apellido}</strong>,</h1><p> notificarte que tu nota respecto a esta evaluación ya ha sido actualizada puedes comprobarlo a través del portal estudiantil, saludos.</p>`
+        }
+
+        await Transporter.sendMail(mailOptions)
 
         await Nota.update({
             evaluacion_id: evaluacion_id,

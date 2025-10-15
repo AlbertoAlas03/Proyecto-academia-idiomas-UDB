@@ -87,6 +87,7 @@ export const create_evaluacion = async (req, res, next) => {
 
         const exists_evaluacion = await evaluacion.findOne({
             where: {
+                curso_id: curso_id,
                 nombre: nombre
             }
         })
@@ -164,6 +165,7 @@ export const update_evaluacion = async (req, res, next) => {
 
         const exists_evaluacion = await evaluacion.findOne({
             where: {
+                curso_id: curso_id,
                 nombre: nombre,
                 evaluacion_id: { [Op.ne]: evaluacion_id }
             }
