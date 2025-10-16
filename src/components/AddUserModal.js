@@ -26,6 +26,12 @@ const AddUserModal = ({
 
     const { add_usuario } = useUser()
 
+    const roles = [
+        "administrador",
+        "profesor",
+        "estudiante"
+    ]
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setisProcessing(true)
@@ -180,9 +186,11 @@ const AddUserModal = ({
                                     <Form.Label><i className="bi bi-person-vcard"></i> Rol del usuario</Form.Label>
                                     <Form.Select value={role} onChange={(e) => setrole(e.target.value)}>
                                         <option value=''>Seleccionar rol</option>
-                                        <option value='administrador'>administrador</option>
-                                        <option value='profesor'>profesor</option>
-                                        <option value='estudiante'>estudiante</option>
+                                        {
+                                            roles.map((r, index) => (
+                                                <option value={r} key={index}>{r}</option>
+                                            ))
+                                        }
                                     </Form.Select>
                                 </Form.Group>
                             </div>

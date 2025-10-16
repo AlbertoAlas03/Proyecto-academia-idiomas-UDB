@@ -20,6 +20,25 @@ const AddCourseModal = ({ showModal, setShowModal, token, list_course, setcourse
     const [selectedLanguageId, setSelectedLanguageId] = useState('')
     const [LanguageSelected, setLanguageSelected] = useState([])
 
+    const horarios = [
+        "Sábado, 8:00-:11:00 a.m.",
+        "Lunes, miércoles y viernes, 7:30-9:00 am",
+        "Lunes, miércoles y viernes, 6:00-7:20 p.m.",
+        "Sábado, 8:00-11:40 a.m."
+    ]
+
+    const programas = [
+        "Sabatino en línea",
+        "Intensivo en línea",
+        "Intensivo presencial",
+        "Intensivo sabatino presencial"
+    ]
+
+    const modalidades = [
+        "En línea",
+        "Presencial"
+    ]
+
     const { Language } = CallLanguage()
 
     const { add_course } = useCourse()
@@ -51,6 +70,8 @@ const AddCourseModal = ({ showModal, setShowModal, token, list_course, setcourse
             fecha_fin: date_finish,
             capacidad_maxima: cupo
         }
+
+        console.log(data.horario)
 
         try {
 
@@ -165,20 +186,25 @@ const AddCourseModal = ({ showModal, setShowModal, token, list_course, setcourse
 
                                 <Form.Group className="mb-3" controlId="formBasicProgramCourse">
                                     <Form.Label><i className="bi bi-person-video"></i> Programa</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Programa"
-                                        value={program}
-                                        onChange={(e) => setProgram(e.target.value)}
-                                    />
+                                    <Form.Select value={program} onChange={(e) => setProgram(e.target.value)}>
+                                        <option value="">Seleccionar programa</option>
+                                        {
+                                            programas.map((p, index) => (
+                                                <option value={p} key={index}>{p}</option>
+                                            ))
+                                        }
+                                    </Form.Select>
                                 </Form.Group>
 
                                 <Form.Group className="mb-3" controlId="formBasicModalidadCourse">
                                     <Form.Label><i className="bi bi-person-video3"></i> Modalidad</Form.Label>
                                     <Form.Select value={modalidad} onChange={(e) => setModalidad(e.target.value)}>
                                         <option value="">Seleccionar modalidad</option>
-                                        <option value="Presencial">Presencial</option>
-                                        <option value="En línea">En línea</option>
+                                        {
+                                            modalidades.map((m, index) => (
+                                                <option value={m} key={index}>{m}</option>
+                                            ))
+                                        }
                                     </Form.Select>
                                 </Form.Group>
 
@@ -186,14 +212,16 @@ const AddCourseModal = ({ showModal, setShowModal, token, list_course, setcourse
 
                             <div className="col-md-6">
 
-                                <Form.Group className="mb-3" controlId="formBasichorarioCourse">
+                                <Form.Group className="mb-3" controlId="formBasicHorario">
                                     <Form.Label><i className="bi bi-clock"></i> Horario</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Horario del curso"
-                                        value={horario}
-                                        onChange={(e) => setHorario(e.target.value)}
-                                    />
+                                    <Form.Select value={horario} onChange={(e) => setHorario(e.target.value)}>
+                                        <option value="">Seleccionar horario</option>
+                                        {
+                                            horarios.map((h, index) => (
+                                                <option value={h} key={index}>{h}</option>
+                                            ))
+                                        }
+                                    </Form.Select>
                                 </Form.Group>
 
                                 <Form.Group className="mb-3" controlId="formBasicdateInitCourse">

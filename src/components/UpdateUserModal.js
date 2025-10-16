@@ -26,6 +26,12 @@ const UpdateUserModal = ({
 
     const { update_user } = useUser()
 
+    const roles = [
+        "administrador",
+        "profesor",
+        "estudiante"
+    ]
+
     const handleSubmit = async (e) => {
         e.preventDefault()
         setisProcessing(true)
@@ -169,9 +175,12 @@ const UpdateUserModal = ({
                                 <Form.Group className="mb-3" controlId="formBasicRol">
                                     <Form.Label><i className="bi bi-person-vcard"></i> Rol del usuario</Form.Label>
                                     <Form.Select value={role} onChange={(e) => setrole(e.target.value)}>
-                                        <option>administrador</option>
-                                        <option>profesor</option>
-                                        <option>estudiante</option>
+                                        <option value=''>Seleccionar rol</option>
+                                        {
+                                            roles.map((r, index) => (
+                                                <option value={r} key={index}>{r}</option>
+                                            ))
+                                        }
                                     </Form.Select>
                                 </Form.Group>
                             </div>
